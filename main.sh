@@ -46,6 +46,14 @@ your own risk.
 EOF
 }
 
+## Variables
+
+DATA_PATH=$HOME/data
+DOCKDATA_PATH=$HOME/dockdata
+UID=$(id -u)
+GUID=$(id -g)
+TIMEZONE=$(cat /etc/timezone)
+
 ## Placeholder 
 
 function placeholder {
@@ -67,12 +75,65 @@ function depend {
   sh get-docker.sh
 }
 
+## System Upgrade
+
+function sysup {
+  sudo apt update
+  sudo apt-get -y upgrade
+}
+
 ## Graphical 
 
 function graphical {
 
   dialog --backtitle "GUI Configuration" \
       --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+}
+
+## Services
+
+### Prowlarr, Radarr, Sonarr
+
+function indexPack {
+  # Indexer Pack
+
+  ## Prowlarr
+  docker run -d \
+    --name=prowlarr \
+    -e PUID=$UID \
+    -e PGID=$GUID \
+    -e TZ=$TIMEZONE \
+    -p 9696:9696 \
+    -v $DOCKDATA_PATH/prowlarr:/config \
+    --restart unless-stopped \
+    linuxserver/prowlarr:develop
+
+  ## Sonarr
+  docker run -d \
+		--name=sonarr \
+		-e PUID=$UID \
+		-e PGID=$GUID \
+		-e TZ=$TIMEZONE \
+		-p 8989:8989 \
+		-v $DOCKDATA_PATH/sonarr:/config \
+		-v $DATA_PATH/:/data \
+		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+		--restart unless-stopped \
+		linuxserver/sonarr:latest
+  
+  ## Radarr
+  docker run -d \
+		--name=radarr \
+		-e PUID=$UID \
+		-e PGID=$GUID \
+		-e TZ=$TIMEZONE \
+		-p 7878:7878 \
+		-v $DOCKDATA_PATH/radarr/data:/config \
+		-v $DATA_PATH/:/data  \
+		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+		--restart unless-stopped \
+		linuxserver/radarr:latest
+
 }
 
 ## Flag Selector
