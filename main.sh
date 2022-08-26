@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## Banner
+
 clear
 cat << EOF
 
@@ -18,6 +19,7 @@ For options and flags use -h or --help.
 EOF
 
 ## Help Prompt
+
 function help {
 cat <<EOF
 
@@ -44,22 +46,31 @@ your own risk.
 EOF
 }
 
-## Graphical 
-function graphical {
-  dialog --backtitle "GUI Configuration" \
-      --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+## GUI Dependencies
+
+function gdepend {
+  sudo apt-get -y install dialog
+
 }
 
 ## Dependencies
-function depend {
-  sudo apt-get -y install dialog
 
-  # Installing Docker-CE
+function depend {
+  # Installing Docker-CE  
   curl -fsSL https://get.docker.com -o get-docker.sh
   sh get-docker.sh
 }
 
+## Graphical 
+
+function graphical {
+
+  dialog --backtitle "GUI Configuration" \
+      --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+}
+
 ## Flag Selector
+
 while [ $# -gt 0 ]; do
   case $1 in
     -a|--install-all)
