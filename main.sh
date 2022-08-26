@@ -1,15 +1,20 @@
 #!/bin/bash
 
 ## Banner
-
+clear
 cat << EOF
+
  █████╗ ███╗   ███╗███████╗
 ██╔══██╗████╗ ████║██╔════╝
 ███████║██╔████╔██║███████╗
 ██╔══██║██║╚██╔╝██║╚════██║
 ██║  ██║██║ ╚═╝ ██║███████║  
 ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   
-                  - useraid                         
+                  - useraid  
+
+Welcome to AutomatedMediaSrv.     
+
+For options and flags use -h or --help.
 EOF
 
 ## Help Prompt
