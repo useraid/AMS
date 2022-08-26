@@ -1,9 +1,16 @@
 #!/bin/bash
 
-## Installing Dependencies
+## Banner
 
-sudo apt-get -y install figlet
-echo "AutomatedMediaSrv" | figlet
+cat << EOF
+ █████╗ ███╗   ███╗███████╗
+██╔══██╗████╗ ████║██╔════╝
+███████║██╔████╔██║███████╗
+██╔══██║██║╚██╔╝██║╚════██║
+██║  ██║██║ ╚═╝ ██║███████║  
+╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   
+                  - useraid                         
+EOF
 
 ## Help Prompt
 
@@ -20,14 +27,28 @@ your own risk.
 
         -h|--help                Display all options and flags. 
 
-        -a|--install-all         Install all Services, Programs and Containers.
+        -a|--install-all         Run all Services, Programs and Containers.
 
-        -s|--selective           Choose which services, containers and programs to install.
+        -s|--selective           Choose which services, containers and programs to Use.
 
-        -r|--remove-all          Run the entire script from beginning to end.
+        -r|--remove-all          Remove all Services, Programs and Containers.
 
         -x|--selective-remove    Choose which services, containers and programs to remove.
+
+        -g|--graphical           Use Terminal Based GUI to setup.
+                                (Pending Implementation)
 EOF
+}
+
+function graphical {
+  dialog --backtitle "GUI Configuration" \
+      --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+}
+
+## Dependencies
+
+function depend {
+  sudo apt-get -y install dialog
 }
 
 ## Flag Selector
@@ -38,7 +59,23 @@ while [ $# -gt 0 ]; do
       help
       exit
       ;;
+    -s|--selective)
+      help
+      exit
+      ;;
+    -r|--remove-all)
+      help
+      exit
+      ;;
+    -x|--selective-remove)
+      help
+      exit
+      ;;
     -h|--help)
+      help
+      exit
+      ;;
+    -g|--graphical)
       help
       exit
       ;;
