@@ -18,10 +18,9 @@ For options and flags use -h or --help.
 EOF
 
 ## Help Prompt
-
 function help {
 cat <<EOF
-Welcome to AutomatedMediaSrv.
+
 
 It is a script to setup a Media server that fetches and installs Movies, Shows, Automatically 
 using various services running as docker containers.
@@ -45,19 +44,22 @@ your own risk.
 EOF
 }
 
+## Graphical 
 function graphical {
   dialog --backtitle "GUI Configuration" \
       --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
 }
 
 ## Dependencies
-
 function depend {
   sudo apt-get -y install dialog
+
+  # Installing Docker-CE
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  sh get-docker.sh
 }
 
 ## Flag Selector
-
 while [ $# -gt 0 ]; do
   case $1 in
     -a|--install-all)
