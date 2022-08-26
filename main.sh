@@ -35,7 +35,7 @@ your own risk.
 
         -a|--install-all         Run all Services, Programs and Containers.
 
-        -s|--selective           Choose which services, containers and programs to Use.
+        -c|--custom              Choose which services, containers and programs to Use.
 
         -r|--remove-all          Remove all Services, Programs and Containers.
 
@@ -44,6 +44,12 @@ your own risk.
         -g|--graphical           Use Terminal Based GUI to setup.
                                 (Pending Implementation)
 EOF
+}
+
+## Placeholder 
+
+function placeholder {
+  echo -e "\nFunction yet to be implemented"
 }
 
 ## GUI Dependencies
@@ -74,19 +80,19 @@ function graphical {
 while [ $# -gt 0 ]; do
   case $1 in
     -a|--install-all)
-      help
+      placeholder
       exit
       ;;
-    -s|--selective)
-      help
+    -c|--custom)
+      placeholder
       exit
       ;;
     -r|--remove-all)
-      help
+      placeholder
       exit
       ;;
     -x|--selective-remove)
-      help
+      placeholder
       exit
       ;;
     -h|--help)
@@ -94,7 +100,7 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -g|--graphical)
-      help
+      graphical
       exit
       ;;
     *)
