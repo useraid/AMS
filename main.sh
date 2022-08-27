@@ -260,49 +260,73 @@ function webui {
 
 function downui {
   # Download Clients
-  
-  ## qBittorrent
-	docker run -d \
-		--name qbittorrent \
-		-e PUID=$SID \
-		-e PGID=$GUID \
-		-e TZ=$TIMEZONE \
-		-e WEBUI_PORT=8090 \
-		-p 8090:8090 \
-		-v $DOCKDATA_PATH/qbittorrent/appdata/config:/config \
-		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-		-v $DATA_PATH/data:/data \
-		--restart unless-stopped \
-		linuxserver/qbittorrent:latest
 
-  ## Deluge
-  docker run -d \
-    --name deluge \
-    -e PUID=$SID \
-    -e PGID=$GUID \
-    -e TZ=$TIMEZONE \
-    -e DELUGE_LOGLEVEL=error \
-    -p 8112:8112 \
-    -v $DOCKDATA_PATH/deluge/config:/config \
-    -v $DOCKDATA_PATH/deluge/downloads:/downloads \
-    --restart unless-stopped \
-    linuxserver/deluge:latest
+  DOWNSEL=$(dialog --title "Choose Download Client" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "qBittorrent" OFF \
+    "2" "Deluge" OFF \
+    "3" "Transmission" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## Transmission
-  docker run -d \
-    --name transmission \
-    -e PUID=$SID \
-    -e PGID=$GUID \
-    -e TZ=$TIMEZONE \
-    -e USER=$TRANUSER \
-    -e PASS=$TRANPASS \
-    -p 9091:9091 \
-    -p 51413:51413 \
-    -p 51413:51413/udp \
-    -v $DOCKDATA_PATH/transmission/config:/config \
-    -v $DOCKDATA_PATH/transmission/downloads:/downloads \
-    --restart unless-stopped \
-    linuxserver/transmission:latest
+  if [ -z "$DOWNSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for DOWNSEL in $DOWNSEL; do
+      case "$DOWNSEL" in
+      "1")
+        ## qBittorrent
+        docker run -d \
+          --name qbittorrent \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -e WEBUI_PORT=8090 \
+          -p 8090:8090 \
+          -v $DOCKDATA_PATH/qbittorrent/appdata/config:/config \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          -v $DATA_PATH/data:/data \
+          --restart unless-stopped \
+          linuxserver/qbittorrent:latest
+        ;;
+      "2")
+        ## Deluge
+        docker run -d \
+            --name deluge \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -e DELUGE_LOGLEVEL=error \
+            -p 8112:8112 \
+            -v $DOCKDATA_PATH/deluge/config:/config \
+            -v $DOCKDATA_PATH/deluge/downloads:/downloads \
+            --restart unless-stopped \
+            linuxserver/deluge:latest    
+        ;;
+      "3")
+        ## Transmission
+        docker run -d \
+            --name transmission \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -e USER=$TRANUSER \
+            -e PASS=$TRANPASS \
+            -p 9091:9091 \
+            -p 51413:51413 \
+            -p 51413:51413/udp \
+            -v $DOCKDATA_PATH/transmission/config:/config \
+            -v $DOCKDATA_PATH/transmission/downloads:/downloads \
+            --restart unless-stopped \
+            linuxserver/transmission:latest
+        ;;
+      *)
+        echo "Unsupported item $DOWNSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
 
 }
 
