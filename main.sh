@@ -66,10 +66,31 @@ function placeholder {
   echo -e "\nFunction yet to be implemented"
 }
 
+## Information
+
+function info {
+  clear
+  dialog --backtitle "Information" \
+      --title "Information" --msgbox "Use the following ports for the services: \n\n \
+Portainer -     $IPADDR:9000 \n \
+Jellyfin -      $IPADDR:8096 \n \
+qBittorrent -   $IPADDR:8090 \n \
+Heimdall -      $IPADDR:80 \n \
+Filebrowser -   $IPADDR:8081 \n \
+Jellyseerr -    $IPADDR:5055 \n \
+Prowlarr -      $IPADDR:9696 \n \
+Bazarr -        $IPADDR:6767 \n \
+Radarr -        $IPADDR:7878 \n \
+Sonarr -        $IPADDR:8989 \n" 20 60
+  clear
+
+}
+
 ## GUI Dependencies
 
 function gdepend {
   sudo apt-get -y install dialog
+  sudo apt-get -y install whiptail
 
 }
 
