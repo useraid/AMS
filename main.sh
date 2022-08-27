@@ -55,6 +55,8 @@ DOCKDATA_PATH=$HOME/dockdata
 UID=$(id -u)
 GUID=$(id -g)
 TIMEZONE=$(cat /etc/timezone)
+TRANUSER='admin'
+TRANPASS='adminpass'
 
 ## Placeholder 
 
@@ -200,6 +202,56 @@ function webui {
     -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
     --restart unless-stopped \
     fallenbagel/jellyseerr:latest
+
+}
+
+### Download Clients - qBittorrent, Deluge, Transmission
+
+function downui {
+  # Download Clients
+  
+  ## qBittorrent
+	docker run -d \
+		--name qbittorrent \
+		-e PUID=$UID \
+		-e PGID=$GUID \
+		-e TZ=$TIMEZONE \
+		-e WEBUI_PORT=8090 \
+		-p 8090:8090 \
+		-v $DOCKDATA_PATH/qbittorrent/appdata/config:/config \
+		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+		-v $DATA_PATH/data:/data \
+		--restart unless-stopped \
+		linuxserver/qbittorrent:latest
+
+  ## Deluge
+  docker run -d \
+    --name deluge \
+    -e PUID=$UID \
+    -e PGID=$GUID \
+    -e TZ=$TIMEZONE \
+    -e DELUGE_LOGLEVEL=error \
+    -p 8112:8112 \
+    -v $DOCKDATA_PATH/deluge/config:/config \
+    -v $DOCKDATA_PATH/deluge/downloads:/downloads \
+    --restart unless-stopped \
+    linuxserver/deluge:latest
+
+  ## Transmission
+  docker run -d \
+    --name transmission \
+    -e PUID=$UID \
+    -e PGID=$GUID \
+    -e TZ=$TIMEZONE \
+    -e USER=$TRANUSER \
+    -e PASS=$TRANPASS \
+    -p 9091:9091 \
+    -p 51413:51413 \
+    -p 51413:51413/udp \
+    -v $DOCKDATA_PATH/transmission/config:/config \
+    -v $DOCKDATA_PATH/transmission/downloads:/downloads \
+    --restart unless-stopped \
+    linuxserver/transmission:latest
 
 }
 
