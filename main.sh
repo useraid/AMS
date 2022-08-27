@@ -58,6 +58,7 @@ TIMEZONE=$(cat /etc/timezone)
 TRANUSER='admin'
 TRANPASS='adminpass'
 DOCINT='86400'
+IPADDR=$(hostname -I | cut -d' ' -f1)
 
 ## Placeholder 
 
@@ -348,7 +349,8 @@ function webhmon {
 
 echo '#!/bin/bash
 url="$(cat webhook.txt)"
-websites_list="$(cat ip.txt):8096 $(cat ip.txt):9000 $(cat ip.txt):8989 $(cat ip.txt):7878 $(cat ip.txt):8090 $(cat ip.txt):5055"
+ipaddr=$(hostname -I | cut -d' ' -f1)
+websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
 curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $url
 for website in ${websites_list} ; do
         status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
