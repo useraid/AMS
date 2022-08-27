@@ -52,8 +52,8 @@ EOF
 
 DATA_PATH=$HOME/data
 DOCKDATA_PATH=$HOME/dockdata
-UID=$(id -u)
 GUID=$(id -g)
+SID=$(id -u)
 TIMEZONE=$(cat /etc/timezone)
 TRANUSER='admin'
 TRANPASS='adminpass'
@@ -101,7 +101,8 @@ function cleanup {
 function graphical {
 
   dialog --backtitle "GUI Configuration" \
-      --title "GUI Configuration" --infobox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+      --title "GUI Configuration" --msgbox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
+      clear
 }
 
 ## Services
@@ -114,7 +115,7 @@ function indexPack {
   ## Prowlarr
   docker run -d \
     --name prowlarr \
-    -e PUID=$UID \
+    -e PUID=$SID \
     -e PGID=$GUID \
     -e TZ=$TIMEZONE \
     -p 9696:9696 \
@@ -125,7 +126,7 @@ function indexPack {
   ## Sonarr
   docker run -d \
 		--name sonarr \
-		-e PUID=$UID \
+		-e PUID=$SID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
 		-p 8989:8989 \
@@ -138,7 +139,7 @@ function indexPack {
   ## Radarr
   docker run -d \
 		--name radarr \
-		-e PUID=$UID \
+		-e PUID=$SID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
 		-p 7878:7878 \
@@ -184,7 +185,7 @@ function webui {
   ## Jellyfin
 	docker run -d \
 		--name jellyfin \
-		-e PUID=$UID \
+		-e PUID=$SID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
 		-p 8096:8096 \
@@ -215,7 +216,7 @@ function downui {
   ## qBittorrent
 	docker run -d \
 		--name qbittorrent \
-		-e PUID=$UID \
+		-e PUID=$SID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
 		-e WEBUI_PORT=8090 \
@@ -229,7 +230,7 @@ function downui {
   ## Deluge
   docker run -d \
     --name deluge \
-    -e PUID=$UID \
+    -e PUID=$SID \
     -e PGID=$GUID \
     -e TZ=$TIMEZONE \
     -e DELUGE_LOGLEVEL=error \
@@ -242,7 +243,7 @@ function downui {
   ## Transmission
   docker run -d \
     --name transmission \
-    -e PUID=$UID \
+    -e PUID=$SID \
     -e PGID=$GUID \
     -e TZ=$TIMEZONE \
     -e USER=$TRANUSER \
@@ -265,7 +266,7 @@ function addserv {
   ## Bazarr
   docker run -d \
     --name bazarr \
-    -e PUID=$UID \
+    -e PUID=$SID \
     -e PGID=$GUID \
     -e TZ=$TIMEZONE \
     -p 6767:6767 \
@@ -279,7 +280,7 @@ function addserv {
   touch $DOCKDATA_PATH/filebrowser/filebrowser.db
   docker run \
     --name filebrowser \
-    -e PUID=$UID \
+    -e PUID=$SID \
     -e PGID=$GUID \
     -p 8070:80 \
     -v /:/srv \
@@ -314,7 +315,7 @@ function srvdash {
   ## Heimdall
 	docker run -d \
 		--name heimdall \
-		-e PUID=$UID \
+		-e PUID=$SID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
 		-p 80:80 \
@@ -326,7 +327,7 @@ function srvdash {
   ## Organizr
   docker run -d \
     --name organizr \
-    -e PUID=$UID \
+    -e PUID=$SID \
 		-e PGID=$GUID \
     -v $DOCKDATA_PATH/organizr:/config \
     -p 80:80 \
@@ -411,7 +412,7 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -i|--info)
-      placeholder
+      info
       exit
       ;;
     -h|--help)
