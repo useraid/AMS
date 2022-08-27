@@ -255,6 +255,39 @@ function downui {
 
 }
 
+### Additional Services - Bazarr, Filebrowser
+
+function addserv {
+  # Additional Services
+
+  ## Bazarr
+    docker run -d \
+    --name bazarr \
+    -e PUID=$UID \
+    -e PGID=$GUID \
+    -e TZ=$TIMEZONE \
+    -p 6767:6767 \
+    -v $DOCKDATA_PATH/bazarr/config:/config \
+    -v $DATA_PATH:/data \
+    --restart unless-stopped \
+    linuxserver/bazarr:latest
+
+  ## File Browser
+  ### Creating DB
+  touch $DOCKDATA_PATH/filebrowser/filebrowser.db
+  docker run \
+    --name filebrowser \
+    -e PUID=$UID \
+    -e PGID=$GUID \
+    -p 8070:80 \
+    -v /:/srv \
+    -v $DOCKDATA_PATH/filebrowser/filebrowser.db:/database/filebrowser.db \
+    -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
+    --restart unless-stopped \
+    filebrowser/filebrowser:latest
+
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
