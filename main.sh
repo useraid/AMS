@@ -57,6 +57,7 @@ GUID=$(id -g)
 TIMEZONE=$(cat /etc/timezone)
 TRANUSER='admin'
 TRANPASS='adminpass'
+DOCINT='86400'
 
 ## Placeholder 
 
@@ -261,7 +262,7 @@ function addserv {
   # Additional Services
 
   ## Bazarr
-    docker run -d \
+  docker run -d \
     --name bazarr \
     -e PUID=$UID \
     -e PGID=$GUID \
@@ -285,6 +286,22 @@ function addserv {
     -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
     --restart unless-stopped \
     filebrowser/filebrowser:latest
+
+}
+
+### Container Updater - Watchtower
+
+function conupdate {
+  # Container Updater
+
+  ## Watchtower
+	docker run -d \
+    --name watchtower \
+    -e WATCHTOWER_CLEANUP=true \
+    -e WATCHTOWER_POLL_INTERVAL=$DOCINT \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    --restart always \
+    containrrr/watchtower
 
 }
 
