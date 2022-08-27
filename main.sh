@@ -71,8 +71,8 @@ function gdepend {
 
 function depend {
   # Installing Docker-CE  
-  curl -fsSL https://get.docker.com -o get-docker.sh
-  sh get-docker.sh
+  curl -fsSL https://get.docker.com -o docker.sh
+  sh docker.sh
 }
 
 ## System Upgrade
@@ -80,6 +80,12 @@ function depend {
 function sysup {
   sudo apt update
   sudo apt-get -y upgrade
+}
+
+## Install Cleanup
+
+function cleanup {
+  rm docker.sh
 }
 
 ## Graphical 
@@ -92,7 +98,7 @@ function graphical {
 
 ## Services
 
-### Prowlarr, Radarr, Sonarr
+### Indexer Pack - Prowlarr, Radarr, Sonarr
 
 function indexPack {
   # Indexer Pack
@@ -133,6 +139,32 @@ function indexPack {
 		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
 		--restart unless-stopped \
 		linuxserver/radarr:latest
+
+}
+
+### Docker Monitoring - Yacht, Portainer
+
+function docmon {
+  # Docker Monitoring
+
+  ## Portainer
+  docker run -d \
+    --name portainer \
+    -p 9000:9000 \
+    -p 9443:9443 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v portainer_data:/data \
+    --restart=always \
+    portainer/portainer-ce:latest
+
+  ## Yacht
+  docker run -d \
+    --name yacht \
+    -p 8000:8000 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v yacht:/config \
+    --restart=always \
+    selfhostedpro/yacht
 
 }
 
