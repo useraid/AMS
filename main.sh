@@ -41,6 +41,8 @@ your own risk.
 
         -x|--selective-remove    Choose which services, containers and programs to remove.
 
+        -i|--info                Display Information and Status of all running services.
+
         -g|--graphical           Use Terminal Based GUI to setup.
                                 (Pending Implementation)
 EOF
@@ -86,6 +88,8 @@ function sysup {
 
 function cleanup {
   rm docker.sh
+  sudo apt autoremove
+  sudo apt autoclean
 }
 
 ## Graphical 
@@ -185,6 +189,10 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -x|--selective-remove)
+      placeholder
+      exit
+      ;;
+    -i|--info)
       placeholder
       exit
       ;;
