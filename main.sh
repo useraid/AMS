@@ -71,17 +71,20 @@ function placeholder {
 function info {
   clear
   dialog --backtitle "Information" \
-      --title "Information" --msgbox "Use the following ports for the services: \n\n \
-Portainer -     $IPADDR:9000 \n \
+      --title "Information" --msgbox "Use the following addresses for the services: \n\n \
+Container Management : \n\n \
+Portainer -     $IPADDR:9000 \n\n \
+Indexers : \n\n \
+Prowlarr -      $IPADDR:9696 \n \
+Sonarr -        $IPADDR:8989 \n \
+Radarr -        $IPADDR:7878 \n\n \
+Webfront UI : \n\n \
 Jellyfin -      $IPADDR:8096 \n \
-qBittorrent -   $IPADDR:8090 \n \
+qBittorrent -   $IPADDR:8090 \n\n \
+Additional Services : \n\n \
 Heimdall -      $IPADDR:80 \n \
 Filebrowser -   $IPADDR:8081 \n \
-Jellyseerr -    $IPADDR:5055 \n \
-Prowlarr -      $IPADDR:9696 \n \
-Bazarr -        $IPADDR:6767 \n \
-Radarr -        $IPADDR:7878 \n \
-Sonarr -        $IPADDR:8989 \n" 20 60
+Bazarr -        $IPADDR:6767 \n" 20 60
   clear
 
 }
@@ -128,49 +131,73 @@ function graphical {
 
 ## Services
 
-### Indexer Pack - Prowlarr, Radarr, Sonarr
+### Indexers and ARR selection - Prowlarr, Radarr, Sonarr, Mylarr, Lidarr
 
 function indexPack {
-  # Indexer Pack
+  # Indexers and ARR selection
 
-  ## Prowlarr
-  docker run -d \
-    --name prowlarr \
-    -e PUID=$SID \
-    -e PGID=$GUID \
-    -e TZ=$TIMEZONE \
-    -p 9696:9696 \
-    -v $DOCKDATA_PATH/prowlarr:/config \
-    --restart unless-stopped \
-    linuxserver/prowlarr:develop
+  INDEXSEL=$(dialog --title "Choose Indexers" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Prowlarr" OFF \
+    "2" "Sonarr" OFF \
+    "3" "Radarr" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## Sonarr
-  docker run -d \
-		--name sonarr \
-		-e PUID=$SID \
-		-e PGID=$GUID \
-		-e TZ=$TIMEZONE \
-		-p 8989:8989 \
-		-v $DOCKDATA_PATH/sonarr:/config \
-		-v $DATA_PATH/:/data \
-		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-		--restart unless-stopped \
-		linuxserver/sonarr:latest
-  
-  ## Radarr
-  docker run -d \
-		--name radarr \
-		-e PUID=$SID \
-		-e PGID=$GUID \
-		-e TZ=$TIMEZONE \
-		-p 7878:7878 \
-		-v $DOCKDATA_PATH/radarr/data:/config \
-		-v $DATA_PATH/:/data  \
-		-v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-		--restart unless-stopped \
-		linuxserver/radarr:latest
+  if [ -z "$INDEXSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for INDEXSEL in $INDEXSEL; do
+      case "$INDEXSEL" in
+      "1")
+        ## Prowlarr
+        docker run -d \
+          --name prowlarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 9696:9696 \
+          -v $DOCKDATA_PATH/prowlarr:/config \
+          --restart unless-stopped \
+          linuxserver/prowlarr:develop
+        ;;
+      "2")
+        ## Sonarr
+        docker run -d \
+          --name sonarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 8989:8989 \
+          -v $DOCKDATA_PATH/sonarr:/config \
+          -v $DATA_PATH/:/data \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          --restart unless-stopped \
+          linuxserver/sonarr:latest        
+        ;;
+      "3")
+        ## Radarr
+        docker run -d \
+          --name radarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 7878:7878 \
+          -v $DOCKDATA_PATH/radarr/data:/config \
+          -v $DATA_PATH/:/data  \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          --restart unless-stopped \
+          linuxserver/radarr:latest
+        ;;
+      *)
+        echo "Unsupported item $INDEXSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
 
 }
+
 
 ### Docker Monitoring - Yacht, Portainer
 
