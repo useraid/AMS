@@ -305,6 +305,43 @@ function conupdate {
 
 }
 
+### Server DashBoard - Heimdall, Organizer, Dashy
+
+function srvdash {
+  # Server DashBoard
+  
+  ## Heimdall
+	docker run -d \
+		--name heimdall \
+		-e PUID=$UID \
+		-e PGID=$GUID \
+		-e TZ=$TIMEZONE \
+		-p 80:80 \
+		-p 443:443 \
+		-v $DOCKDATA_PATH/heimdall:/config \
+		--restart unless-stopped \
+		linuxserver/heimdall:latest
+
+  ## Organizr
+  docker run -d \
+    --name organizr \
+    -e PUID=$UID \
+		-e PGID=$GUID \
+    -v $DOCKDATA_PATH/organizr:/config \
+    -p 80:80 \
+    -e fpm="false" \ 
+    -e branch="v2-master" \ 
+    organizr/organizr
+
+  ## Dashy
+  docker run -d \
+    --name dashy \
+    -p 80:80 \
+    --restart=always \
+    lissy93/dashy:latest
+
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
