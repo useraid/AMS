@@ -109,7 +109,7 @@ function indexPack {
 
   ## Prowlarr
   docker run -d \
-    --name=prowlarr \
+    --name prowlarr \
     -e PUID=$UID \
     -e PGID=$GUID \
     -e TZ=$TIMEZONE \
@@ -120,7 +120,7 @@ function indexPack {
 
   ## Sonarr
   docker run -d \
-		--name=sonarr \
+		--name sonarr \
 		-e PUID=$UID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
@@ -133,7 +133,7 @@ function indexPack {
   
   ## Radarr
   docker run -d \
-		--name=radarr \
+		--name radarr \
 		-e PUID=$UID \
 		-e PGID=$GUID \
 		-e TZ=$TIMEZONE \
@@ -169,6 +169,37 @@ function docmon {
     -v yacht:/config \
     --restart=always \
     selfhostedpro/yacht
+
+}
+
+### Webfront UI - Jellyfin, Jellyseerr
+
+function webui {
+  # Webfront UI
+
+  ## Jellyfin
+	docker run -d \
+		--name jellyfin \
+		-e PUID=$UID \
+		-e PGID=$GUID \
+		-e TZ=$TIMEZONE \
+		-p 8096:8096 \
+		-p 8920:8920  \
+		-v $DOCKDATA_PATH/jellyfin/config:/config \
+		-v $DOCKDATA_PATH/jellyfin/cache:/cache \
+		-v $DATA_PATH/:/data \
+		--restart unless-stopped \
+		linuxserver/jellyfin:latest
+
+  ## Jellyseerr
+  docker run -d \
+    --name jellyseerr \
+    -e LOG_LEVEL=debug \
+    -e TZ=$TIMEZONE \
+    -p 5055:5055 \
+    -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
+    --restart unless-stopped \
+    fallenbagel/jellyseerr:latest
 
 }
 
