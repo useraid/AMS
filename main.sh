@@ -527,6 +527,42 @@ done' >> webhmon.sh
 
 }
 
+## Monitoring
+
+function monitor {
+  # Monitoring UI
+
+  MONSEL=$(dialog --title "Choose Monitoring Services" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Cockpit" OFF \
+    "2" "Webmin" OFF 3>&1 1>&2 2>&3)
+    clear
+
+  if [ -z "$MONSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for MONSEL in $MONSEL; do
+      case "$MONSEL" in
+      "1")
+        ## Cockpit
+        . /etc/os-release
+        sudo apt install -t ${VERSION_CODENAME}-backports cockpit
+        ;;
+      "2")
+        ## Webmin
+        wget http://prdownloads.sourceforge.net/webadmin/webmin_1.998_all.deb
+        sudo dpkg --install webmin_1.998_all.deb
+        ;;
+      *)
+        echo "Unsupported item $MONSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
