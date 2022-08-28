@@ -103,6 +103,9 @@ function depend {
   # Installing Docker-CE  
   curl -fsSL https://get.docker.com -o docker.sh
   sh docker.sh
+  ## Adding current user to docker group
+  sudo usermod -aG docker $USER
+  
 }
 
 ## System Upgrade
@@ -431,15 +434,18 @@ function addserv {
 
 function conupdate {
   # Container Updater
-
-  ## Watchtower
-	docker run -d \
-    --name watchtower \
-    -e WATCHTOWER_CLEANUP=true \
-    -e WATCHTOWER_POLL_INTERVAL=$DOCINT \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    --restart always \
-    containrrr/watchtower
+  if whiptail --yesno "Do you want to use container service that will automatically update all your containers (Watchtower) ?" 10 50; then
+    ## Watchtower
+    docker run -d \
+      --name watchtower \
+      -e WATCHTOWER_CLEANUP=true \
+      -e WATCHTOWER_POLL_INTERVAL=$DOCINT \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      --restart always \
+      containrrr/watchtower
+  else
+    echo "Not installing Watchtower"
+  fi
 
 }
 
