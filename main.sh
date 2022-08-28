@@ -251,29 +251,50 @@ function docmon {
 function webui {
   # Webfront UI
 
-  ## Jellyfin
-	docker run -d \
-		--name jellyfin \
-		-e PUID=$SID \
-		-e PGID=$GUID \
-		-e TZ=$TIMEZONE \
-		-p 8096:8096 \
-		-p 8920:8920  \
-		-v $DOCKDATA_PATH/jellyfin/config:/config \
-		-v $DOCKDATA_PATH/jellyfin/cache:/cache \
-		-v $DATA_PATH/:/data \
-		--restart unless-stopped \
-		linuxserver/jellyfin:latest
+  WEBUISEL=$(dialog --title "Choose Web UI Services" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Jellyfin" OFF \
+    "2" "Jellyseerr" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## Jellyseerr
-  docker run -d \
-    --name jellyseerr \
-    -e LOG_LEVEL=debug \
-    -e TZ=$TIMEZONE \
-    -p 5055:5055 \
-    -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
-    --restart unless-stopped \
-    fallenbagel/jellyseerr:latest
+  if [ -z "$WEBUISEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for WEBUISEL in $WEBUISEL; do
+      case "$WEBUISEL" in
+      "1")
+    ## Jellyfin
+        docker run -d \
+            --name jellyfin \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 8096:8096 \
+            -p 8920:8920  \
+            -v $DOCKDATA_PATH/jellyfin/config:/config \
+            -v $DOCKDATA_PATH/jellyfin/cache:/cache \
+            -v $DATA_PATH/:/data \
+            --restart unless-stopped \
+            linuxserver/jellyfin:latest
+        ;;
+      "2")
+    ## Jellyseerr
+        docker run -d \
+            --name jellyseerr \
+            -e LOG_LEVEL=debug \
+            -e TZ=$TIMEZONE \
+            -p 5055:5055 \
+            -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
+            --restart unless-stopped \
+            fallenbagel/jellyseerr:latest
+        ;;
+      *)
+        echo "Unsupported item $WEBUISEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
 
 }
 
