@@ -447,36 +447,59 @@ function conupdate {
 
 function srvdash {
   # Server DashBoard
-  
-  ## Heimdall
-	docker run -d \
-		--name heimdall \
-		-e PUID=$SID \
-		-e PGID=$GUID \
-		-e TZ=$TIMEZONE \
-		-p 80:80 \
-		-p 443:443 \
-		-v $DOCKDATA_PATH/heimdall:/config \
-		--restart unless-stopped \
-		linuxserver/heimdall:latest
 
-  ## Organizr
-  docker run -d \
-    --name organizr \
-    -e PUID=$SID \
-		-e PGID=$GUID \
-    -v $DOCKDATA_PATH/organizr:/config \
-    -p 80:80 \
-    -e fpm="false" \ 
-    -e branch="v2-master" \ 
-    organizr/organizr
+  DASHSEL=$(dialog --title "Choose Server Dashboard" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Heimdall" OFF \
+    "2" "Organizr" OFF \
+    "3" "Dashy" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## Dashy
-  docker run -d \
-    --name dashy \
-    -p 80:80 \
-    --restart=always \
-    lissy93/dashy:latest
+  if [ -z "$DASHSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for DASHSEL in $DASHSEL; do
+      case "$DASHSEL" in
+      "1")
+        ## Heimdall
+        docker run -d \
+            --name heimdall \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 80:80 \
+            -p 443:443 \
+            -v $DOCKDATA_PATH/heimdall:/config \
+            --restart unless-stopped \
+            linuxserver/heimdall:latest
+        ;;
+      "2")
+        ## Organizr
+        docker run -d \
+            --name organizr \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -v $DOCKDATA_PATH/organizr:/config \
+            -p 80:80 \
+            -e fpm="false" \ 
+            -e branch="v2-master" \ 
+            organizr/organizr
+        ;;
+      "3")
+        ## Dashy
+        docker run -d \
+            --name dashy \
+            -p 80:80 \
+            --restart=always \
+            lissy93/dashy:latest
+        ;;
+      *)
+        echo "Unsupported item $DASHSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
 
 }
 
