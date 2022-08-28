@@ -434,7 +434,8 @@ function addserv {
 
 function conupdate {
   # Container Updater
-  if whiptail --yesno "Do you want to use container service that will automatically update all your containers (Watchtower) ?" 10 50; then
+  if dialog --yesno "Do you want to use container service that will automatically update all your containers (Watchtower) ?" 10 50; then
+    clear
     ## Watchtower
     docker run -d \
       --name watchtower \
@@ -444,6 +445,7 @@ function conupdate {
       --restart always \
       containrrr/watchtower
   else
+    clear
     echo "Not installing Watchtower"
   fi
 
