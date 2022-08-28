@@ -204,24 +204,45 @@ function indexPack {
 function docmon {
   # Docker Monitoring
 
-  ## Portainer
-  docker run -d \
-    --name portainer \
-    -p 9000:9000 \
-    -p 9443:9443 \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v portainer_data:/data \
-    --restart=always \
-    portainer/portainer-ce:latest
+  DOCMONSEL=$(dialog --title "Choose Docker Container Manager" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Portainer" OFF \
+    "2" "Yacht" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## Yacht
-  docker run -d \
-    --name yacht \
-    -p 8000:8000 \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v yacht:/config \
-    --restart=always \
-    selfhostedpro/yacht
+  if [ -z "$DOCMONSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for DOCMONSEL in $DOCMONSEL; do
+      case "$DOCMONSEL" in
+      "1")
+        ## Portainer
+        docker run -d \
+            --name portainer \
+            -p 9000:9000 \
+            -p 9443:9443 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v portainer_data:/data \
+            --restart=always \
+            portainer/portainer-ce:latest
+        ;;
+      "2")
+        ## Yacht
+        docker run -d \
+            --name yacht \
+            -p 8000:8000 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v yacht:/config \
+            --restart=always \
+            selfhostedpro/yacht
+        ;;
+      *)
+        echo "Unsupported item $DOCMONSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
 
 }
 
