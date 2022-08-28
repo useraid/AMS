@@ -335,31 +335,53 @@ function downui {
 function addserv {
   # Additional Services
 
-  ## Bazarr
-  docker run -d \
-    --name bazarr \
-    -e PUID=$SID \
-    -e PGID=$GUID \
-    -e TZ=$TIMEZONE \
-    -p 6767:6767 \
-    -v $DOCKDATA_PATH/bazarr/config:/config \
-    -v $DATA_PATH:/data \
-    --restart unless-stopped \
-    linuxserver/bazarr:latest
+  ADDSERSEL=$(dialog --title "Choose Additional Services" --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Bazarr" OFF \
+    "2" "File Browser" OFF 3>&1 1>&2 2>&3)
+    clear
 
-  ## File Browser
-  ### Creating DB
-  touch $DOCKDATA_PATH/filebrowser/filebrowser.db
-  docker run \
-    --name filebrowser \
-    -e PUID=$SID \
-    -e PGID=$GUID \
-    -p 8070:80 \
-    -v /:/srv \
-    -v $DOCKDATA_PATH/filebrowser/filebrowser.db:/database/filebrowser.db \
-    -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
-    --restart unless-stopped \
-    filebrowser/filebrowser:latest
+  if [ -z "$ADDSERSEL" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for ADDSERSEL in $ADDSERSEL; do
+      case "$ADDSERSEL" in
+      "1")
+        ## Bazarr
+        docker run -d \
+            --name bazarr \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 6767:6767 \
+            -v $DOCKDATA_PATH/bazarr/config:/config \
+            -v $DATA_PATH:/data \
+            --restart unless-stopped \
+            linuxserver/bazarr:latest
+        ;;
+      "2")
+        ## File Browser
+        ### Creating DB
+        mkdir -p $DOCKDATA_PATH/filebrowser/
+        touch $DOCKDATA_PATH/filebrowser/filebrowser.db
+        docker run \
+            --name filebrowser \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -p 8070:80 \
+            -v /:/srv \
+            -v $DOCKDATA_PATH/filebrowser/filebrowser.db:/database/filebrowser.db \
+            -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
+            --restart unless-stopped \
+            filebrowser/filebrowser:latest  
+        ;;
+      *)
+        echo "Unsupported item $ADDSERSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
 
 }
 
