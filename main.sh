@@ -83,7 +83,7 @@ Jellyfin -      $IPADDR:8096 \n \
 qBittorrent -   $IPADDR:8090 \n\n \
 Additional Services : \n\n \
 Heimdall -      $IPADDR:80 \n \
-Filebrowser -   $IPADDR:8081 \n \
+Filebrowser -   $IPADDR:8070 \n \
 Bazarr -        $IPADDR:6767 \n" 20 60
   clear
 
@@ -105,6 +105,9 @@ function depend {
   sh docker.sh
   ## Adding current user to docker group
   sudo usermod -aG docker $USER
+
+  # Installing wget
+  sudo apt-get -y install wget
   
 }
 
@@ -528,6 +531,12 @@ for website in ${websites_list} ; do
                 domain="Jellyfin"
             elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
                 domain="Portainer"
+            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                domain="Filebrowser"
+            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                domain="Prowlarr"
+            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                domain="Bazarr"
             elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
                 domain="Sonarr"
             elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
@@ -543,6 +552,12 @@ for website in ${websites_list} ; do
                 domain="Jellyfin"
             elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
                 domain="Portainer"
+            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                domain="Filebrowser"
+            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                domain="Prowlarr"
+            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                domain="Bazarr"
             elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
                 domain="Sonarr"
             elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
