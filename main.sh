@@ -122,6 +122,7 @@ function sysup {
 
 function cleanup {
   rm docker.sh
+  rm webhmon.sh
   sudo apt autoremove
   sudo apt autoclean
 }
@@ -570,6 +571,9 @@ for website in ${websites_list} ; do
             curl -H "Content-Type: application/json" -X POST -d '{"content":"'"${domain} is up and running with SC : ${status_code}"'"}'  $url
         fi
 done' >> webhmon.sh
+sudo mkdir -p /etc/scripts
+chmod +x webhmon.sh
+mv webhmon.sh /etc/scripts/
 
 }
 
