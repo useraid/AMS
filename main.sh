@@ -638,6 +638,27 @@ function mainmenu {
   fi
 }
 
+## Configuration Menu 
+
+function configmenu {
+  CONFSEL=$(dialog --menu "Choose an option" 18 100 10 \
+    "Change Ports" "Change Ports of services and containers" \
+    "Reset Ports to default" "Reset all Ports to default" 3>&1 1>&2 2>&3)
+
+  if [ -z "$CONFSEL" ]; then
+    echo "No option was chosen (user hit Cancel)"
+  else
+      if [[ "$CONFSEL" = "Change Ports" ]] ; then
+          echo "Hello"
+      elif [[ "$CONFSEL" = "Reset Ports to default" ]] ; then
+          echo "1"
+      elif [[ "$CONFSEL" = "Services Status" ]] ; then
+          echo "2"
+      fi
+  fi
+
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
