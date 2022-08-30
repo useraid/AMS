@@ -616,7 +616,7 @@ function monitor {
 ## Main Menu
 
 function mainmenu {
-  MENUSEL=$(dialog --menu "Choose an option" 18 100 10 \
+  MENUSEL=$(dialog --title "Main Menu" --menu "Choose an option" 18 100 10 \
     "Install Containers" "Select and install containers and services" \
     "Remove Containers" "Select and remove installed containers and services" \
     "Services Status" "View information and status of services and containers" \
@@ -641,7 +641,7 @@ function mainmenu {
 ## Configuration Menu 
 
 function configmenu {
-  CONFSEL=$(dialog --menu "Choose an option" 18 100 10 \
+  CONFSEL=$(dialog --title "Configuration Menu" --menu "Choose an option" 18 100 10 \
     "Change Ports" "Change Ports of services and containers" \
     "Reset Ports to default" "Reset all Ports to default" 3>&1 1>&2 2>&3)
 
@@ -656,6 +656,29 @@ function configmenu {
           echo "2"
       fi
   fi
+
+}
+
+## Install Containers Function
+
+function instcontainers{
+  # Functions
+  ## Indexers Selection
+  indexPack
+  ## Docker Monitoring
+  docmon
+  ## WebUI Selection
+  webui
+  ## Download Client Selection
+  downui
+  ## Additional Services Selection
+  addserv
+  ## Services Dashboard
+  srvdash
+  ## Server Monitoring Dashboard
+  monitor
+  ## Container Updater
+  conupdate
 
 }
 
