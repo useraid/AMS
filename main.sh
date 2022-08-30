@@ -613,6 +613,31 @@ function monitor {
 
 }
 
+## Main Menu
+
+function mainmenu {
+  MENUSEL=$(dialog --menu "Choose an option" 18 100 10 \
+    "Install Containers" "Select and install containers and services" \
+    "Remove Containers" "Select and remove installed containers and services" \
+    "Services Status" "View information and status of services and containers" \
+    "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
+
+  if [ -z "$MENUSEL" ]; then
+    echo "No option was chosen (user hit Cancel)"
+  else
+      if [[ "$MENUSEL" = "Install Containers" ]] ; then
+          echo "Hello"
+      elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
+          echo "1"
+      elif [[ "$MENUSEL" = "Services Status" ]] ; then
+          echo "2"
+      elif [[ "$MENUSEL" = "Configuration" ]] ; then
+          echo "3"
+      fi
+
+  fi
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
