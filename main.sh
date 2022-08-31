@@ -493,8 +493,8 @@ function srvdash {
             -e PGID=$GUID \
             -v $DOCKDATA_PATH/organizr:/config \
             -p 80:80 \
-            -e fpm="false" \ 
-            -e branch="v2-master" \ 
+            -e fpm="false" \
+            -e branch="v2-master" \
             organizr/organizr
         ;;
       "3")
@@ -619,6 +619,8 @@ function mainmenu {
   MENUSEL=$(dialog --title "Main Menu" --menu "Choose an option" 18 100 10 \
     "Install Containers" "Select and install containers and services" \
     "Remove Containers" "Select and remove installed containers and services" \
+    "Custom Installation" "Show all options and choose specific services." \
+    "Express Installation" "Express installation using default services and containers." \
     "Services Status" "View information and status of services and containers" \
     "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
 
@@ -626,9 +628,11 @@ function mainmenu {
     echo "No option was chosen (user hit Cancel)"
   else
       if [[ "$MENUSEL" = "Install Containers" ]] ; then
-          echo "Hello"
+          instcontainers
       elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
           echo "1"
+      elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
+          echo "4"
       elif [[ "$MENUSEL" = "Services Status" ]] ; then
           echo "2"
       elif [[ "$MENUSEL" = "Configuration" ]] ; then
@@ -661,7 +665,7 @@ function configmenu {
 
 ## Install Containers Function
 
-function instcontainers{
+function instcontainers {
   # Functions
   ## Indexers Selection
   indexPack
@@ -682,12 +686,50 @@ function instcontainers{
 
 }
 
+## Custom Installation Menu
+
+function custmenu {
+  CUSTSEL=$(dialog --title "Custom Installation" --menu "Choose an option" 18 100 10 \
+    "Indexers" "Choose Indexers and Aggregators. " \
+    "UI" "Select Frontend UI." \
+    "Docker Monitoring" "Select Docker monitoring service." \
+    "Server Monitoring Dashboard" "View information and status of server." \
+    "Download Clients" "Select Download Clients." \
+    "Additional Services" "Select Additional Services." \
+    "Services Dashboard" "Select services launcher dashboard." \
+    "Container Updater" "Install automatic container updater." 3>&1 1>&2 2>&3)
+
+  if [ -z "$CUSTSEL" ]; then
+    echo "No option was chosen (user hit Cancel)"
+  else
+      if [[ "$CUSTSEL" = "Indexers" ]] ; then
+          instcontainers
+      elif [[ "$CUSTSEL" = "UI" ]] ; then
+          echo "1"
+      elif [[ "$CUSTSEL" = "Docker Monitoring" ]] ; then
+          echo "4"
+      elif [[ "$CUSTSEL" = "Server Monitoring Dashboard" ]] ; then
+          echo "2"
+      elif [[ "$CUSTSEL" = "Download Clients" ]] ; then
+          echo "1"
+      elif [[ "$CUSTSEL" = "Additional Services" ]] ; then
+          echo "1"
+      elif [[ "$CUSTSEL" = "Services Dashboard" ]] ; then
+          echo "1"
+      elif [[ "$CUSTSEL" = "Container Updater" ]] ; then
+          echo "3"
+      fi
+
+  fi
+  clear
+}
+
 ## Flag Selector
 
 while [ $# -gt 0 ]; do
   case $1 in
     -a|--install-all)
-      placeholder
+      instcontainers
       exit
       ;;
     -c|--custom)
