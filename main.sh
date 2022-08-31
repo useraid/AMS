@@ -33,18 +33,13 @@ your own risk.
 
         -h|--help                Display all options and flags. 
 
-        -a|--install-all         Run all Services, Programs and Containers.
+        -g|--graphical           Run all Services, Programs and Containers.
 
-        -c|--custom              Choose which services, containers and programs to Use.
-
-        -r|--remove-all          Remove all Services, Programs and Containers.
-
-        -x|--selective-remove    Choose which services, containers and programs to remove.
+        -c|--cli                 Choose which services, containers and programs to Use.
 
         -i|--info                Display Information and Status of all running services.
 
-        -g|--graphical           Use Terminal Based GUI to setup.
-                                (Pending Implementation)
+
 EOF
 }
 
@@ -518,12 +513,12 @@ function srvdash {
 ### Webhook Monitoring
 
 function webhmon {
-
+  WEBHOOK=$(dialog --inputbox "Enter Webhook URL" 10 100 3>&1 1>&2 2>&3)
 echo '#!/bin/bash
 url="$(cat webhook.txt)"
 ipaddr=$(hostname -I | cut -d' ' -f1)
 websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
-curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $url
+curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $WEBHOOK
 for website in ${websites_list} ; do
         status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
 
@@ -573,7 +568,10 @@ for website in ${websites_list} ; do
 done' >> webhmon.sh
 sudo mkdir -p /etc/scripts
 chmod +x webhmon.sh
+echo "$WEBHOOK" >> webhook.txt
+mv webhook.txt /etc/scripts/
 mv webhmon.sh /etc/scripts/
+clear
 
 }
 
@@ -736,19 +734,7 @@ function mainmenu {
 
 while [ $# -gt 0 ]; do
   case $1 in
-    -a|--install-all)
-      instcontainers
-      exit
-      ;;
-    -c|--custom)
-      placeholder
-      exit
-      ;;
-    -r|--remove-all)
-      placeholder
-      exit
-      ;;
-    -x|--selective-remove)
+    -c|--cli)
       placeholder
       exit
       ;;
@@ -761,7 +747,7 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -g|--graphical)
-      graphical
+      mainmenu
       exit
       ;;
     *)
