@@ -40,6 +40,8 @@ your own risk.
 
         -i|--info                Display Information and Status of all running services.
 
+        -s|--status              Display Status of all the services.
+
 
 EOF
 }
@@ -60,6 +62,77 @@ IPADDR=$(hostname -I | cut -d' ' -f1)
 
 function placeholder {
   echo -e "\nFunction yet to be implemented"
+}
+
+## Status Monitoring function
+
+function statusinfo {
+
+  # ANSI color
+  clear='\033[0m' # Clearing color
+
+  ipaddr=$(hostname -I | cut -d' ' -f1)
+  websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8070 http://$ipaddr:9696 http://$ipaddr:6767 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
+  for website in ${websites_list} ; do
+          status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
+
+          if [[ "$status_code" -ne 200 ]] ; then
+            color='\033[0;31m' # Setting color to red.
+              if [[ "$website" = http://*.*.*.*:8096 ]] ; then
+                  JFstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
+                  PTstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                  FBstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                  PLstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                  BZstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
+                  SNstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
+                  RDstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
+                  QBstat="Not Active"
+              elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
+                  JSstat="Not Active"
+              fi
+          else
+              color='\033[0;32m' # Setting color to green.
+              if [[ "$website" = http://*.*.*.*:8096 ]] ; then
+                  JFstat="Active"
+              elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
+                  PTstat="Active"
+              elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                  FBstat="Active"
+              elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                  PLstat="Active"
+              elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                  BZstat="Active"
+              elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
+                  SNstat="Active"
+              elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
+                  RDstat="Active"
+              elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
+                  QBstat="Active"
+              elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
+                  JSstat="Active"
+              fi
+          fi
+  done
+  
+  # Status Output
+
+  echo -e "Jellyfin is ${color}$JFstat${clear}"
+  echo -e "Portainer is ${color}$PTstat${clear}"
+  echo -e "File Browser is ${color}$FBstat${clear}"
+  echo -e "Prowlarr is ${color}$PLstat${clear}"
+  echo -e "Bazarr is ${color}$BZstat${clear}"
+  echo -e "Sonarr is ${color}$SNstat${clear}"
+  echo -e "Radarr is ${color}$RDstat${clear}"
+  echo -e "qBittorrent is ${color}$QBstat${clear}"
+  echo -e "Jellyseerr is ${color}$JSstat${clear}"
+
 }
 
 ## Information
@@ -132,6 +205,14 @@ function graphical {
       clear
 }
 
+## No selection prompt
+
+function nosel {
+  dialog \
+      --title "No Selection Made" --msgbox "The User choose cancel or No selection was made." 10 30
+      clear
+}
+
 ## Services
 
 ### Indexers and ARR selection - Prowlarr, Radarr, Sonarr, Mylarr, Lidarr
@@ -146,8 +227,7 @@ function indexPack {
     clear
 
   if [ -z "$INDEXSEL" ]; then
-    clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for INDEXSEL in $INDEXSEL; do
       case "$INDEXSEL" in
@@ -214,7 +294,7 @@ function docmon {
 
   if [ -z "$DOCMONSEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for DOCMONSEL in $DOCMONSEL; do
       case "$DOCMONSEL" in
@@ -261,7 +341,7 @@ function webui {
 
   if [ -z "$WEBUISEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for WEBUISEL in $WEBUISEL; do
       case "$WEBUISEL" in
@@ -314,7 +394,7 @@ function downui {
 
   if [ -z "$DOWNSEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for DOWNSEL in $DOWNSEL; do
       case "$DOWNSEL" in
@@ -387,7 +467,7 @@ function addserv {
 
   if [ -z "$ADDSERSEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for ADDSERSEL in $ADDSERSEL; do
       case "$ADDSERSEL" in
@@ -464,7 +544,7 @@ function srvdash {
 
   if [ -z "$DASHSEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for DASHSEL in $DASHSEL; do
       case "$DASHSEL" in
@@ -511,7 +591,7 @@ function srvdash {
 
 }
 
-### Webhook Monitoring
+### Webhook Monitoring ####################### OPTIMIZE THIS ####################
 
 function webhmon {
   WEBHOOK=$(dialog --inputbox "Enter Webhook URL" 10 100 3>&1 1>&2 2>&3)
@@ -519,7 +599,7 @@ echo '#!/bin/bash
 url="$(cat webhook.txt)"
 ipaddr=$(hostname -I | cut -d' ' -f1)
 websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
-curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $WEBHOOK
+curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $url
 for website in ${websites_list} ; do
         status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
 
@@ -588,7 +668,7 @@ function monitor {
 
   if [ -z "$MONSEL" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for MONSEL in $MONSEL; do
       case "$MONSEL" in
@@ -641,7 +721,7 @@ function rmserv {
 
   if [ -z "$RMCONT" ]; then
     clear
-    echo "No option was selected (or Cancelled)"
+    nosel
   else
     for RMCONT in $RMCONT; do
       case "$RMCONT" in
@@ -751,7 +831,7 @@ function configmenu {
     "Reset Ports to default" "Reset all Ports to default" 3>&1 1>&2 2>&3)
 
   if [ -z "$CONFSEL" ]; then
-    echo "No option was chosen (user hit Cancel)"
+    nosel
   else
       if [[ "$CONFSEL" = "Change Ports" ]] ; then
           echo "Hello"
@@ -801,7 +881,7 @@ function custmenu {
     "Container Updater" "Install automatic container updater." 3>&1 1>&2 2>&3)
 
   if [ -z "$CUSTSEL" ]; then
-    echo "No option was chosen (user hit Cancel)"
+    nosel
   else
       if [[ "$CUSTSEL" = "Indexers" ]] ; then
           indexPack
@@ -837,7 +917,7 @@ function mainmenu {
     "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
 
   if [ -z "$MENUSEL" ]; then
-    echo "No option was chosen (user hit Cancel)"
+    nosel
   else
       if [[ "$MENUSEL" = "Run Installer" ]] ; then
           sysup
@@ -858,7 +938,6 @@ function mainmenu {
       elif [[ "$MENUSEL" = "Configuration" ]] ; then
           configmenu
       fi
-
   fi
 }
 
@@ -870,16 +949,20 @@ while [ $# -gt 0 ]; do
       placeholder
       exit
       ;;
+    -g|--graphical)
+      mainmenu
+      exit
+      ;;
     -i|--info)
       info
       exit
       ;;
-    -h|--help)
-      help
+    -s|--status)
+      statusinfo
       exit
       ;;
-    -g|--graphical)
-      mainmenu
+    -h|--help)
+      help
       exit
       ;;
     *)
