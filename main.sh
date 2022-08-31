@@ -150,6 +150,9 @@ Radarr -        $IPADDR:7878 \n\n \
 Webfront UI : \n\n \
 Jellyfin -      $IPADDR:8096 \n \
 qBittorrent -   $IPADDR:8090 \n\n \
+Server Monitoring Dashboard : \n\n \
+Cockpit -       $IPADDR:9090 \n \
+Webmin -        $IPADDR:10000 \n\n \
 Additional Services : \n\n \
 Heimdall -      $IPADDR:80 \n \
 Filebrowser -   $IPADDR:8070 \n \
@@ -161,22 +164,36 @@ Bazarr -        $IPADDR:6767 \n" 20 60
 ## GUI Dependencies
 
 function gdepend {
-  sudo apt-get -y install dialog
-  sudo apt-get -y install whiptail
+
+  # Installing dialog
+  if [ ! -f $HOME/.depend/dialog ]; then
+    sudo apt-get -y install dialog
+    touch $HOME/.depend/dialog
+  else
+    echo "Continuing..."
 
 }
 
 ## Dependencies
 
 function depend {
-  # Installing Docker-CE  
-  curl -fsSL https://get.docker.com -o docker.sh
-  sh docker.sh
-  ## Adding current user to docker group
-  sudo usermod -aG docker $USER
+  mkdir -p $HOME/.depend
+  # Installing Docker-CE
+  if [ ! -f $HOME/.depend/docker ]; then  
+    curl -fsSL https://get.docker.com -o docker.sh
+    sh docker.sh
+    touch $HOME/.depend/docker
+    ## Adding current user to docker group
+    sudo usermod -aG docker $USER
+  else
+    echo "Continuing..."
 
-  # Installing wget
-  sudo apt-get -y install wget
+  # Installing curl
+  if [ ! -f $HOME/.depend/curl ]; then  
+    sudo apt-get -y install curl
+    touch $HOME/.depend/curl
+  else
+    echo "Continuing..."
   
 }
 
@@ -834,11 +851,11 @@ function configmenu {
     nosel
   else
       if [[ "$CONFSEL" = "Change Ports" ]] ; then
-          echo "Hello"
+          placeholder
       elif [[ "$CONFSEL" = "Reset Ports to default" ]] ; then
-          echo "1"
+          placeholder
       elif [[ "$CONFSEL" = "Services Status" ]] ; then
-          echo "2"
+          statusinfo
       fi
   fi
 
@@ -914,7 +931,8 @@ function mainmenu {
     "Custom Installation" "Show all options and choose specific services." \
     "Express Installation" "Express installation using default services and containers." \
     "Services Status" "View information and status of services and containers" \
-    "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
+    "Configuration" "Change ports of services." \
+    "Exit" "Exit the Menu" 3>&1 1>&2 2>&3)
 
   if [ -z "$MENUSEL" ]; then
     nosel
@@ -937,6 +955,8 @@ function mainmenu {
           info
       elif [[ "$MENUSEL" = "Configuration" ]] ; then
           configmenu
+      elif [[ "$MENUSEL" = "Exit" ]] ; then
+          exit
       fi
   fi
 }
