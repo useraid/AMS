@@ -180,6 +180,7 @@ function gdepend {
     touch $HOME/.depend/dialog
   else
     echo "Continuing..."
+  fi
 
 }
 
@@ -196,6 +197,7 @@ function depend {
     sudo usermod -aG docker $USER
   else
     echo "Continuing..."
+  fi
 
   # Installing curl
   if [ ! -f $HOME/.depend/curl ]; then  
@@ -203,6 +205,7 @@ function depend {
     touch $HOME/.depend/curl
   else
     echo "Continuing..."
+  fi
   
 }
 
