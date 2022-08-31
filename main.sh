@@ -24,9 +24,9 @@ function help {
 cat <<EOF
 
 
-It is a script to setup a Media server that fetches and installs Movies, Shows, Automatically 
+This program setups a Media server that fetches and installs Movies, Shows, Automatically 
 using various services running as docker containers.
-    WARNING: Most of the functionality in this script requires root privileges. Use at
+    WARNING: Some of the functionality in this script requires root privileges. Use at
 your own risk.
 
     options:
@@ -613,35 +613,6 @@ function monitor {
 
 }
 
-## Main Menu
-
-function mainmenu {
-  MENUSEL=$(dialog --title "Main Menu" --menu "Choose an option" 18 100 10 \
-    "Install Containers" "Select and install containers and services" \
-    "Remove Containers" "Select and remove installed containers and services" \
-    "Custom Installation" "Show all options and choose specific services." \
-    "Express Installation" "Express installation using default services and containers." \
-    "Services Status" "View information and status of services and containers" \
-    "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
-
-  if [ -z "$MENUSEL" ]; then
-    echo "No option was chosen (user hit Cancel)"
-  else
-      if [[ "$MENUSEL" = "Install Containers" ]] ; then
-          instcontainers
-      elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
-          echo "1"
-      elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
-          echo "4"
-      elif [[ "$MENUSEL" = "Services Status" ]] ; then
-          echo "2"
-      elif [[ "$MENUSEL" = "Configuration" ]] ; then
-          echo "3"
-      fi
-
-  fi
-}
-
 ## Configuration Menu 
 
 function configmenu {
@@ -703,25 +674,62 @@ function custmenu {
     echo "No option was chosen (user hit Cancel)"
   else
       if [[ "$CUSTSEL" = "Indexers" ]] ; then
-          instcontainers
+          indexPack
       elif [[ "$CUSTSEL" = "UI" ]] ; then
-          echo "1"
+          webui
       elif [[ "$CUSTSEL" = "Docker Monitoring" ]] ; then
-          echo "4"
+          docmon
       elif [[ "$CUSTSEL" = "Server Monitoring Dashboard" ]] ; then
-          echo "2"
+          monitor
       elif [[ "$CUSTSEL" = "Download Clients" ]] ; then
-          echo "1"
+          downui
       elif [[ "$CUSTSEL" = "Additional Services" ]] ; then
-          echo "1"
+          addserv
       elif [[ "$CUSTSEL" = "Services Dashboard" ]] ; then
-          echo "1"
+          srvdash
       elif [[ "$CUSTSEL" = "Container Updater" ]] ; then
-          echo "3"
+          conupdate
       fi
 
   fi
   clear
+}
+
+## Main Menu
+
+function mainmenu {
+  MENUSEL=$(dialog --title "Main Menu" --menu "Choose an option" 18 100 10 \
+    "Run Installer" "Select and install containers and services" \
+    "Remove Containers" "Select and remove installed containers and services" \
+    "Custom Installation" "Show all options and choose specific services." \
+    "Express Installation" "Express installation using default services and containers." \
+    "Services Status" "View information and status of services and containers" \
+    "Configuration" "Change ports of services." 3>&1 1>&2 2>&3)
+
+  if [ -z "$MENUSEL" ]; then
+    echo "No option was chosen (user hit Cancel)"
+  else
+      if [[ "$MENUSEL" = "Run Installer" ]] ; then
+          sysup
+          depend
+          gdepend
+          instcontainers
+          cleanup
+      elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
+          echo "1"
+      elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
+          sysup
+          depend
+          gdepend
+          custmenu
+          cleanup
+      elif [[ "$MENUSEL" = "Services Status" ]] ; then
+          info
+      elif [[ "$MENUSEL" = "Configuration" ]] ; then
+          configmenu
+      fi
+
+  fi
 }
 
 ## Flag Selector
