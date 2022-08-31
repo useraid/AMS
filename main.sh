@@ -36,6 +36,7 @@ your own risk.
         -g|--graphical           Run all Services, Programs and Containers.
 
         -c|--cli                 Choose which services, containers and programs to Use.
+                                  (Pending Implementation)
 
         -i|--info                Display Information and Status of all running services.
 
@@ -611,6 +612,137 @@ function monitor {
 
 }
 
+## Services Removal Function
+############# OPTIMIZE THIS ###################
+
+function rmserv {
+  # Removing Services ############# OPTIMIZE THIS ###################
+
+  RMCONT=$(dialog --title "Select Services to remove." --separate-output --checklist "Choose options" 10 35 4 \
+    "1" "Heimdall" OFF \
+    "2" "Organizr" OFF \
+    "3" "Dashy" OFF \
+    "4" "Cockpit" OFF \
+    "5" "Portainer" OFF \
+    "6" "Webmin" OFF \
+    "7" "Prowlarr" OFF \
+    "8" "Radarr" OFF \
+    "9" "Sonarr" OFF \
+    "10" "Jellyfin" OFF \
+    "11" "Jellyseerr" OFF \
+    "12" "Watchtower" OFF \
+    "13" "Yacht" OFF \
+    "14" "qBittorrent" OFF \
+    "15" "Deluge" OFF \
+    "16" "Transmission" OFF \
+    "17" "Bazarr" OFF \
+    "18" "Filebrowser" OFF 3>&1 1>&2 2>&3)
+    clear
+
+  if [ -z "$RMCONT" ]; then
+    clear
+    echo "No option was selected (or Cancelled)"
+  else
+    for RMCONT in $RMCONT; do
+      case "$RMCONT" in
+      "1")
+        ## Heimdall
+        docker stop heimdall
+        docker rm heimdall
+        ;;
+      "2")
+        ## Organizr
+        docker stop organizr
+        docker rm organizr
+        ;;
+      "3")
+        ## Dashy
+        docker stop dashy
+        docker rm organizr
+        ;;
+      "4")
+        ## Cockpit
+        sudo apt-get -y autoremove cockpit --purge
+        ;;
+      "5")
+        ## Portainer
+        docker stop portainer
+        docker rm portainer
+        ;;
+      "6")
+        ## Webmin
+        sudo apt-get -y --purge remove webmin
+        ;;
+      "7")
+        ## Prowlarr
+        docker stop prowlarr
+        docker rm prowlarr
+        ;;
+      "8")
+        ## Radarr
+        docker stop radarr
+        docker rm radarr
+        ;;
+      "9")
+        ## Sonarr
+        docker stop sonarr
+        docker rm sonarr
+        ;;
+      "10")
+        ## Jellyfin
+        docker stop jellyfin
+        docker rm jellyfin
+        ;;
+      "11")
+        ## Jellyseerr
+        docker stop jellyseerr
+        docker rm jellyseerr
+        ;;
+      "12")
+        ## Watchtower
+        docker stop watchtower
+        docker rm watchtower
+        ;;
+      "13")
+        ## Yacht
+        docker stop yacht
+        docker rm yacht
+        ;;
+      "14")
+        ## qBittorrent
+        docker stop qbittorrent
+        docker rm qbittorrent
+        ;;
+      "15")
+        ## Deluge
+        docker stop deluge
+        docker rm deluge
+        ;;
+      "16")
+        ## Transmission
+        docker stop transmission
+        docker rm transmission
+        ;;
+      "17")
+        ## Bazarr
+        docker stop bazarr
+        docker rm bazarr
+        ;;
+      "18")
+        ## FileBrowser
+        docker stop filebrowser
+        docker rm filebrowser
+        ;;
+      *)
+        echo "Unsupported item $RMCONT!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+}
+
 ## Configuration Menu 
 
 function configmenu {
@@ -714,7 +846,7 @@ function mainmenu {
           instcontainers
           cleanup
       elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
-          echo "1"
+          rmserv
       elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
           sysup
           depend
