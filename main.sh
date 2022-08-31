@@ -64,6 +64,15 @@ function placeholder {
   echo -e "\nFunction yet to be implemented"
 }
 
+## Set Hostname
+
+function hostn {
+
+  HNAME=$(dialog --title "Changing Hostname" --inputbox "Enter New Hostname" 10 100 3>&1 1>&2 2>&3)
+  clear
+  sudo hostnamectl set-hostname $HNAME
+}
+
 ## Status Monitoring function
 
 function statusinfo {
@@ -844,7 +853,9 @@ function rmserv {
 
 function configmenu {
   CONFSEL=$(dialog --title "Configuration Menu" --menu "Choose an option" 18 100 10 \
+    "Change Hostname" "Change Hostname of the server." \
     "Change Ports" "Change Ports of services and containers" \
+    "Services Status" "View the status of services" \
     "Reset Ports to default" "Reset all Ports to default" 3>&1 1>&2 2>&3)
 
   if [ -z "$CONFSEL" ]; then
@@ -852,6 +863,8 @@ function configmenu {
   else
       if [[ "$CONFSEL" = "Change Ports" ]] ; then
           placeholder
+      elif [[ "$CONFSEL" = "Change Hostname" ]] ; then
+          hostn
       elif [[ "$CONFSEL" = "Reset Ports to default" ]] ; then
           placeholder
       elif [[ "$CONFSEL" = "Services Status" ]] ; then
