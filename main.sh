@@ -26,7 +26,7 @@ cat <<EOF
 
 This program setups a Media server that fetches and installs Movies, Shows, Automatically 
 using various services running as docker containers.
-    WARNING: Some of the functionality in this script requires root privileges. Use at
+    WARNING: Some of the functionality in this program requires root privileges. Use at
 your own risk.
 
     options:

@@ -26,4 +26,5 @@ EOF
 
 mkdir -p ams/usr/local/bin
 cp main.sh ams
+chmod +x ams
 cp ams ams/usr/local/bin
