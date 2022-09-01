@@ -249,7 +249,7 @@ function nosel {
 function indexPack {
   # Indexers and ARR selection
 
-  INDEXSEL=$(dialog --title "Choose Indexers" --separate-output --checklist "Choose options" 10 35 4 \
+  INDEXSEL=$(dialog --title "Choose Indexers" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Prowlarr" OFF \
     "2" "Sonarr" OFF \
     "3" "Radarr" OFF 3>&1 1>&2 2>&3)
@@ -262,7 +262,7 @@ function indexPack {
 function docmon {
   # Docker Monitoring
 
-  DOCMONSEL=$(dialog --title "Choose Docker Container Manager" --separate-output --checklist "Choose options" 10 35 4 \
+  DOCMONSEL=$(dialog --title "Choose Docker Container Manager" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Portainer" OFF \
     "2" "Yacht" OFF 3>&1 1>&2 2>&3)
     clear
@@ -274,7 +274,7 @@ function docmon {
 function webui {
   # Webfront UI
 
-  WEBUISEL=$(dialog --title "Choose Web UI Services" --separate-output --checklist "Choose options" 10 35 4 \
+  WEBUISEL=$(dialog --title "Choose Web UI Services" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Jellyfin" OFF \
     "2" "Jellyseerr" OFF 3>&1 1>&2 2>&3)
     clear
@@ -286,7 +286,7 @@ function webui {
 function downui {
   # Download Clients
 
-  DOWNSEL=$(dialog --title "Choose Download Client" --separate-output --checklist "Choose options" 10 35 4 \
+  DOWNSEL=$(dialog --title "Choose Download Client" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "qBittorrent" OFF \
     "2" "Deluge" OFF \
     "3" "Transmission" OFF 3>&1 1>&2 2>&3)
@@ -299,7 +299,7 @@ function downui {
 function addserv {
   # Additional Services
 
-  ADDSERSEL=$(dialog --title "Choose Additional Services" --separate-output --checklist "Choose options" 10 35 4 \
+  ADDSERSEL=$(dialog --title "Choose Additional Services" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Bazarr" OFF \
     "2" "File Browser" OFF 3>&1 1>&2 2>&3)
     clear
@@ -332,7 +332,7 @@ function conupdate {
 function srvdash {
   # Server DashBoard
 
-  DASHSEL=$(dialog --title "Choose Server Dashboard" --separate-output --checklist "Choose options" 10 35 4 \
+  DASHSEL=$(dialog --title "Choose Server Dashboard" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Heimdall" OFF \
     "2" "Organizr" OFF \
     "3" "Dashy" OFF 3>&1 1>&2 2>&3)
@@ -410,7 +410,7 @@ clear
 function monitor {
   # Monitoring UI
 
-  MONSEL=$(dialog --title "Choose Monitoring Services" --separate-output --checklist "Choose options" 10 35 4 \
+  MONSEL=$(dialog --title "Choose Monitoring Services" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Cockpit" OFF \
     "2" "Webmin" OFF 3>&1 1>&2 2>&3)
     clear
@@ -744,7 +744,7 @@ function startinstall {
 function rmserv {
   # Removing Services ############# OPTIMIZE THIS ###################
 
-  RMCONT=$(dialog --title "Select Services to remove." --separate-output --checklist "Choose options" 10 35 4 \
+  RMCONT=$(dialog --title "Select Services to remove." --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
     "1" "Heimdall" OFF \
     "2" "Organizr" OFF \
     "3" "Dashy" OFF \
@@ -975,14 +975,15 @@ function mainmenu {
     nosel
   else
       if [[ "$MENUSEL" = "Run Installer" ]] ; then
-          # sysup
-          # depend
-          # gdepend
+          sysup
+          depend
+          gdepend
           instcontainers
           startinstall
           cleanup
       elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
           rmserv
+          cleanup
       elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
           sysup
           depend
