@@ -1009,10 +1009,12 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -g|--graphical)
+      gdepend
       mainmenu
       exit
       ;;
     -i|--info)
+      gdepend
       info
       exit
       ;;
