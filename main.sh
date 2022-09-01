@@ -255,61 +255,7 @@ function indexPack {
     "3" "Radarr" OFF 3>&1 1>&2 2>&3)
     clear
 
-  if [ -z "$INDEXSEL" ]; then
-    nosel
-  else
-    for INDEXSEL in $INDEXSEL; do
-      case "$INDEXSEL" in
-      "1")
-        ## Prowlarr
-        docker run -d \
-          --name prowlarr \
-          -e PUID=$SID \
-          -e PGID=$GUID \
-          -e TZ=$TIMEZONE \
-          -p 9696:9696 \
-          -v $DOCKDATA_PATH/prowlarr:/config \
-          --restart unless-stopped \
-          linuxserver/prowlarr:develop
-        ;;
-      "2")
-        ## Sonarr
-        docker run -d \
-          --name sonarr \
-          -e PUID=$SID \
-          -e PGID=$GUID \
-          -e TZ=$TIMEZONE \
-          -p 8989:8989 \
-          -v $DOCKDATA_PATH/sonarr:/config \
-          -v $DATA_PATH/:/data \
-          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-          --restart unless-stopped \
-          linuxserver/sonarr:latest        
-        ;;
-      "3")
-        ## Radarr
-        docker run -d \
-          --name radarr \
-          -e PUID=$SID \
-          -e PGID=$GUID \
-          -e TZ=$TIMEZONE \
-          -p 7878:7878 \
-          -v $DOCKDATA_PATH/radarr/data:/config \
-          -v $DATA_PATH/:/data  \
-          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-          --restart unless-stopped \
-          linuxserver/radarr:latest
-        ;;
-      *)
-        echo "Unsupported item $INDEXSEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
-
 }
-
 
 ### Docker Monitoring - Yacht, Portainer
 
@@ -320,41 +266,6 @@ function docmon {
     "1" "Portainer" OFF \
     "2" "Yacht" OFF 3>&1 1>&2 2>&3)
     clear
-
-  if [ -z "$DOCMONSEL" ]; then
-    clear
-    nosel
-  else
-    for DOCMONSEL in $DOCMONSEL; do
-      case "$DOCMONSEL" in
-      "1")
-        ## Portainer
-        docker run -d \
-            --name portainer \
-            -p 9000:9000 \
-            -p 9443:9443 \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v portainer_data:/data \
-            --restart=always \
-            portainer/portainer-ce:latest
-        ;;
-      "2")
-        ## Yacht
-        docker run -d \
-            --name yacht \
-            -p 8000:8000 \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v yacht:/config \
-            --restart=always \
-            selfhostedpro/yacht
-        ;;
-      *)
-        echo "Unsupported item $DOCMONSEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
 
 }
 
@@ -367,46 +278,6 @@ function webui {
     "1" "Jellyfin" OFF \
     "2" "Jellyseerr" OFF 3>&1 1>&2 2>&3)
     clear
-
-  if [ -z "$WEBUISEL" ]; then
-    clear
-    nosel
-  else
-    for WEBUISEL in $WEBUISEL; do
-      case "$WEBUISEL" in
-      "1")
-    ## Jellyfin
-        docker run -d \
-            --name jellyfin \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -e TZ=$TIMEZONE \
-            -p 8096:8096 \
-            -p 8920:8920  \
-            -v $DOCKDATA_PATH/jellyfin/config:/config \
-            -v $DOCKDATA_PATH/jellyfin/cache:/cache \
-            -v $DATA_PATH/:/data \
-            --restart unless-stopped \
-            linuxserver/jellyfin:latest
-        ;;
-      "2")
-    ## Jellyseerr
-        docker run -d \
-            --name jellyseerr \
-            -e LOG_LEVEL=debug \
-            -e TZ=$TIMEZONE \
-            -p 5055:5055 \
-            -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
-            --restart unless-stopped \
-            fallenbagel/jellyseerr:latest
-        ;;
-      *)
-        echo "Unsupported item $WEBUISEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
 
 }
 
@@ -421,67 +292,6 @@ function downui {
     "3" "Transmission" OFF 3>&1 1>&2 2>&3)
     clear
 
-  if [ -z "$DOWNSEL" ]; then
-    clear
-    nosel
-  else
-    for DOWNSEL in $DOWNSEL; do
-      case "$DOWNSEL" in
-      "1")
-        ## qBittorrent
-        docker run -d \
-          --name qbittorrent \
-          -e PUID=$SID \
-          -e PGID=$GUID \
-          -e TZ=$TIMEZONE \
-          -e WEBUI_PORT=8090 \
-          -p 8090:8090 \
-          -v $DOCKDATA_PATH/qbittorrent/appdata/config:/config \
-          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
-          -v $DATA_PATH/data:/data \
-          --restart unless-stopped \
-          linuxserver/qbittorrent:latest
-        ;;
-      "2")
-        ## Deluge
-        docker run -d \
-            --name deluge \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -e TZ=$TIMEZONE \
-            -e DELUGE_LOGLEVEL=error \
-            -p 8112:8112 \
-            -v $DOCKDATA_PATH/deluge/config:/config \
-            -v $DOCKDATA_PATH/deluge/downloads:/downloads \
-            --restart unless-stopped \
-            linuxserver/deluge:latest    
-        ;;
-      "3")
-        ## Transmission
-        docker run -d \
-            --name transmission \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -e TZ=$TIMEZONE \
-            -e USER=$TRANUSER \
-            -e PASS=$TRANPASS \
-            -p 9091:9091 \
-            -p 51413:51413 \
-            -p 51413:51413/udp \
-            -v $DOCKDATA_PATH/transmission/config:/config \
-            -v $DOCKDATA_PATH/transmission/downloads:/downloads \
-            --restart unless-stopped \
-            linuxserver/transmission:latest
-        ;;
-      *)
-        echo "Unsupported item $DOWNSEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
-
-
 }
 
 ### Additional Services - Bazarr, Filebrowser
@@ -493,49 +303,6 @@ function addserv {
     "1" "Bazarr" OFF \
     "2" "File Browser" OFF 3>&1 1>&2 2>&3)
     clear
-
-  if [ -z "$ADDSERSEL" ]; then
-    clear
-    nosel
-  else
-    for ADDSERSEL in $ADDSERSEL; do
-      case "$ADDSERSEL" in
-      "1")
-        ## Bazarr
-        docker run -d \
-            --name bazarr \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -e TZ=$TIMEZONE \
-            -p 6767:6767 \
-            -v $DOCKDATA_PATH/bazarr/config:/config \
-            -v $DATA_PATH:/data \
-            --restart unless-stopped \
-            linuxserver/bazarr:latest
-        ;;
-      "2")
-        ## File Browser
-        ### Creating DB
-        mkdir -p $DOCKDATA_PATH/filebrowser/
-        touch $DOCKDATA_PATH/filebrowser/filebrowser.db
-        docker run \
-            --name filebrowser \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -p 8070:80 \
-            -v /:/srv \
-            -v $DOCKDATA_PATH/filebrowser/filebrowser.db:/database/filebrowser.db \
-            -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
-            --restart unless-stopped \
-            filebrowser/filebrowser:latest  
-        ;;
-      *)
-        echo "Unsupported item $ADDSERSEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
 
 }
 
@@ -570,53 +337,6 @@ function srvdash {
     "2" "Organizr" OFF \
     "3" "Dashy" OFF 3>&1 1>&2 2>&3)
     clear
-
-  if [ -z "$DASHSEL" ]; then
-    clear
-    nosel
-  else
-    for DASHSEL in $DASHSEL; do
-      case "$DASHSEL" in
-      "1")
-        ## Heimdall
-        docker run -d \
-            --name heimdall \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -e TZ=$TIMEZONE \
-            -p 80:80 \
-            -p 443:443 \
-            -v $DOCKDATA_PATH/heimdall:/config \
-            --restart unless-stopped \
-            linuxserver/heimdall:latest
-        ;;
-      "2")
-        ## Organizr
-        docker run -d \
-            --name organizr \
-            -e PUID=$SID \
-            -e PGID=$GUID \
-            -v $DOCKDATA_PATH/organizr:/config \
-            -p 80:80 \
-            -e fpm="false" \
-            -e branch="v2-master" \
-            organizr/organizr
-        ;;
-      "3")
-        ## Dashy
-        docker run -d \
-            --name dashy \
-            -p 80:80 \
-            --restart=always \
-            lissy93/dashy:latest
-        ;;
-      *)
-        echo "Unsupported item $DASHSEL!" >&2
-        exit 1
-        ;;
-      esac
-    done
-  fi
 
 }
 
@@ -694,6 +414,303 @@ function monitor {
     "1" "Cockpit" OFF \
     "2" "Webmin" OFF 3>&1 1>&2 2>&3)
     clear
+
+}
+
+## Installer
+
+function startinstall {
+  # Indexers
+
+  if [ -z "$INDEXSEL" ]; then
+    nosel
+  else
+    for INDEXSEL in $INDEXSEL; do
+      case "$INDEXSEL" in
+      "1")
+        ## Prowlarr
+        docker run -d \
+          --name prowlarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 9696:9696 \
+          -v $DOCKDATA_PATH/prowlarr:/config \
+          --restart unless-stopped \
+          linuxserver/prowlarr:develop
+        ;;
+      "2")
+        ## Sonarr
+        docker run -d \
+          --name sonarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 8989:8989 \
+          -v $DOCKDATA_PATH/sonarr:/config \
+          -v $DATA_PATH/:/data \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          --restart unless-stopped \
+          linuxserver/sonarr:latest        
+        ;;
+      "3")
+        ## Radarr
+        docker run -d \
+          --name radarr \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -p 7878:7878 \
+          -v $DOCKDATA_PATH/radarr/data:/config \
+          -v $DATA_PATH/:/data  \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          --restart unless-stopped \
+          linuxserver/radarr:latest
+        ;;
+      *)
+        echo "Unsupported item $INDEXSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # Docker Monitoring
+
+  if [ -z "$DOCMONSEL" ]; then
+    clear
+    nosel
+  else
+    for DOCMONSEL in $DOCMONSEL; do
+      case "$DOCMONSEL" in
+      "1")
+        ## Portainer
+        docker run -d \
+            --name portainer \
+            -p 9000:9000 \
+            -p 9443:9443 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v portainer_data:/data \
+            --restart=always \
+            portainer/portainer-ce:latest
+        ;;
+      "2")
+        ## Yacht
+        docker run -d \
+            --name yacht \
+            -p 8000:8000 \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v yacht:/config \
+            --restart=always \
+            selfhostedpro/yacht
+        ;;
+      *)
+        echo "Unsupported item $DOCMONSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # WebUI
+
+  if [ -z "$WEBUISEL" ]; then
+    clear
+    nosel
+  else
+    for WEBUISEL in $WEBUISEL; do
+      case "$WEBUISEL" in
+      "1")
+    ## Jellyfin
+        docker run -d \
+            --name jellyfin \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 8096:8096 \
+            -p 8920:8920  \
+            -v $DOCKDATA_PATH/jellyfin/config:/config \
+            -v $DOCKDATA_PATH/jellyfin/cache:/cache \
+            -v $DATA_PATH/:/data \
+            --restart unless-stopped \
+            linuxserver/jellyfin:latest
+        ;;
+      "2")
+    ## Jellyseerr
+        docker run -d \
+            --name jellyseerr \
+            -e LOG_LEVEL=debug \
+            -e TZ=$TIMEZONE \
+            -p 5055:5055 \
+            -v $DOCKDATA_PATH/jellyseerr/config:/app/config \
+            --restart unless-stopped \
+            fallenbagel/jellyseerr:latest
+        ;;
+      *)
+        echo "Unsupported item $WEBUISEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # Download Clients
+
+  if [ -z "$DOWNSEL" ]; then
+    clear
+    nosel
+  else
+    for DOWNSEL in $DOWNSEL; do
+      case "$DOWNSEL" in
+      "1")
+        ## qBittorrent
+        docker run -d \
+          --name qbittorrent \
+          -e PUID=$SID \
+          -e PGID=$GUID \
+          -e TZ=$TIMEZONE \
+          -e WEBUI_PORT=8090 \
+          -p 8090:8090 \
+          -v $DOCKDATA_PATH/qbittorrent/appdata/config:/config \
+          -v $DOCKDATA_PATH/qbittorrent/downloads:/downloads \
+          -v $DATA_PATH/data:/data \
+          --restart unless-stopped \
+          linuxserver/qbittorrent:latest
+        ;;
+      "2")
+        ## Deluge
+        docker run -d \
+            --name deluge \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -e DELUGE_LOGLEVEL=error \
+            -p 8112:8112 \
+            -v $DOCKDATA_PATH/deluge/config:/config \
+            -v $DOCKDATA_PATH/deluge/downloads:/downloads \
+            --restart unless-stopped \
+            linuxserver/deluge:latest    
+        ;;
+      "3")
+        ## Transmission
+        docker run -d \
+            --name transmission \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -e USER=$TRANUSER \
+            -e PASS=$TRANPASS \
+            -p 9091:9091 \
+            -p 51413:51413 \
+            -p 51413:51413/udp \
+            -v $DOCKDATA_PATH/transmission/config:/config \
+            -v $DOCKDATA_PATH/transmission/downloads:/downloads \
+            --restart unless-stopped \
+            linuxserver/transmission:latest
+        ;;
+      *)
+        echo "Unsupported item $DOWNSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # Additional Services
+
+  if [ -z "$ADDSERSEL" ]; then
+    clear
+    nosel
+  else
+    for ADDSERSEL in $ADDSERSEL; do
+      case "$ADDSERSEL" in
+      "1")
+        ## Bazarr
+        docker run -d \
+            --name bazarr \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 6767:6767 \
+            -v $DOCKDATA_PATH/bazarr/config:/config \
+            -v $DATA_PATH:/data \
+            --restart unless-stopped \
+            linuxserver/bazarr:latest
+        ;;
+      "2")
+        ## File Browser
+        ### Creating DB
+        mkdir -p $DOCKDATA_PATH/filebrowser/
+        touch $DOCKDATA_PATH/filebrowser/filebrowser.db
+        docker run \
+            --name filebrowser \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -p 8070:80 \
+            -v /:/srv \
+            -v $DOCKDATA_PATH/filebrowser/filebrowser.db:/database/filebrowser.db \
+            -v $DOCKDATA_PATH/filebrowser/settings.json:/config/settings.json \
+            --restart unless-stopped \
+            filebrowser/filebrowser:latest  
+        ;;
+      *)
+        echo "Unsupported item $ADDSERSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # Server Dashboard
+
+  if [ -z "$DASHSEL" ]; then
+    clear
+    nosel
+  else
+    for DASHSEL in $DASHSEL; do
+      case "$DASHSEL" in
+      "1")
+        ## Heimdall
+        docker run -d \
+            --name heimdall \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -e TZ=$TIMEZONE \
+            -p 80:80 \
+            -p 443:443 \
+            -v $DOCKDATA_PATH/heimdall:/config \
+            --restart unless-stopped \
+            linuxserver/heimdall:latest
+        ;;
+      "2")
+        ## Organizr
+        docker run -d \
+            --name organizr \
+            -e PUID=$SID \
+            -e PGID=$GUID \
+            -v $DOCKDATA_PATH/organizr:/config \
+            -p 80:80 \
+            -e fpm="false" \
+            -e branch="v2-master" \
+            organizr/organizr
+        ;;
+      "3")
+        ## Dashy
+        docker run -d \
+            --name dashy \
+            -p 80:80 \
+            --restart=always \
+            lissy93/dashy:latest
+        ;;
+      *)
+        echo "Unsupported item $DASHSEL!" >&2
+        exit 1
+        ;;
+      esac
+    done
+  fi
+
+  # Monitoring
 
   if [ -z "$MONSEL" ]; then
     clear
@@ -859,7 +876,8 @@ function configmenu {
     "Change Hostname" "Change Hostname of the server." \
     "Change Ports" "Change Ports of services and containers" \
     "Services Status" "View the status of services" \
-    "Reset Ports to default" "Reset all Ports to default" 3>&1 1>&2 2>&3)
+    "Reset Ports to default" "Reset all Ports to default" \
+    "Exit" "Exit configuration menu." 3>&1 1>&2 2>&3)
 
   if [ -z "$CONFSEL" ]; then
     nosel
@@ -872,6 +890,9 @@ function configmenu {
           placeholder
       elif [[ "$CONFSEL" = "Services Status" ]] ; then
           statusinfo
+      elif [[ "$CONFSEL" = "Exit" ]] ; then
+          exit
+          clear
       fi
   fi
 
@@ -954,10 +975,11 @@ function mainmenu {
     nosel
   else
       if [[ "$MENUSEL" = "Run Installer" ]] ; then
-          sysup
-          depend
-          gdepend
+          # sysup
+          # depend
+          # gdepend
           instcontainers
+          startinstall
           cleanup
       elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
           rmserv
