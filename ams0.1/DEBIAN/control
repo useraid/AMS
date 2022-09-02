@@ -1,9 +1,0 @@
-Package: ams
-Version: 0.1
-Section: custom
-Priority: optional
-Architecture: all
-Essential: no
-Installed-Size: 1024
-Maintainer: github.com/useraid
-Description: This program setups a Media server that fetches and installs Movies, Shows, Automatically using various services running as docker containers.
