@@ -4,15 +4,15 @@
 
 VER="0.1"
 
-echo $VER
+export FVER=$VER  # Global Variable for localsrv
 
-mkdir -p ams/DEBIAN
+mkdir -p ams$VER/DEBIAN
 
 # Creating Control file
 
-touch ams/DEBIAN/control
+touch ams$VER/DEBIAN/control
 
-cat << EOF >> ams/DEBIAN/control
+cat << EOF >> ams$VER/DEBIAN/control
 Package: ams
 Version: $VER
 Section: custom
@@ -24,7 +24,13 @@ Maintainer: github.com/useraid
 Description: This program setups a Media server that fetches and installs Movies, Shows, Automatically using various services running as docker containers.
 EOF
 
-mkdir -p ams/usr/local/bin
+# Program Folder
+
+mkdir -p ams$VER/usr/share/ams
+
+# Adding Main Program
+
+mkdir -p ams$VER/usr/local/bin
 cp main.sh ams
 chmod +x ams
-cp ams ams/usr/local/bin
+cp ams ams$VER/usr/local/bin
