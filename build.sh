@@ -64,3 +64,14 @@ mkdir -p ams$VER/usr/local/bin
 cp main.sh ams
 chmod +x ams
 cp ams ams$VER/usr/local/bin
+
+# Setting permissions
+
+chmod 755 ams$VER/usr/local/bin
+chmod 755 ams$VER/DEBIAN/postinst
+chmod 755 ams$VER/DEBIAN/prerm
+chmod 755 ams$VER/DEBIAN/postinst
+
+# Building it
+
+dpkg-deb --build ams$VER
