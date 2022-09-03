@@ -56,6 +56,6 @@ docker build -t amsdev .
 ```
 3. Initialize and Run the container using the newly built image.
 ```
-docker run -d --name amsdev amsdev
+docker run -dit --name amsdev amsdev
 ```
 4. Open the container in VSCode and develop in the container.

@@ -20,6 +20,10 @@ EOF
 
 ## Help Prompt
 
+function vers {
+  echo "You are using AMS version 0.1.2."
+}
+
 function help {
 cat <<EOF
 
@@ -39,6 +43,8 @@ your own risk.
                                   (Pending Implementation)
 
         -i|--info                Display Information and Status of all running services.
+
+        -v|--version             Display current version of ams.
 
         -s|--status              Display Status of all the services.
 
@@ -1026,6 +1032,9 @@ while [ $# -gt 0 ]; do
       help
       exit
       ;;
+    -v|--version
+      vers
+      exit
     *)
       echo "Unknown option $1"
       help

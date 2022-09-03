@@ -1,6 +1,7 @@
 FROM ubuntu
+RUN mkdir /AMS
 RUN apt-get -y update
-RUN apt install -y dialog
-RUN apt install -y git
-RUN apt install -y curl
-COPY . .
+RUN apt-get install -y dialog
+RUN apt-get install -y git
+RUN apt-get install -y curl
+COPY . /AMS

@@ -2,7 +2,7 @@
 
 ## Build script for AMS
 
-VER="0.1"
+VER="0.1.2"
 
 export FVER=$VER  # Global Variable for localsrv
 
