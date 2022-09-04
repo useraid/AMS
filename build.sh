@@ -2,7 +2,7 @@
 
 ## Build script for AMS
 
-VER="0.1.2"
+VER="0.1.4"
 
 export FVER=$VER  # Global Variable for localsrv
 
@@ -12,7 +12,7 @@ mkdir -p ams$VER/DEBIAN
 
 touch ams$VER/DEBIAN/control
 
-cat << EOF >> ams$VER/DEBIAN/control
+cat << EOF > ams$VER/DEBIAN/control
 Package: ams
 Version: $VER
 Section: custom
@@ -22,27 +22,6 @@ Essential: no
 Installed-Size: 1024
 Maintainer: github.com/useraid
 Description: This program setups a Media server that fetches and installs Movies, Shows, Automatically using various services running as docker containers.
-EOF
-
-# Creating postinst
-
-touch ams$VER/DEBIAN/postinst
-
-cat << EOF >> ams$VER/DEBIAN/postinst
-chmod +x /usr/local/bin/ams
-EOF
-
-# Creating prerm
-
-touch ams$VER/DEBIAN/prerm
-
-cat << EOF >> ams$VER/DEBIAN/prerm
-sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli
-sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce
-sudo rm -rf /var/lib/docker /etc/docker
-sudo rm /etc/apparmor.d/docker
-sudo groupdel docker
-sudo rm -rf /var/run/docker.sock
 EOF
 
 # Creating postrm
@@ -63,14 +42,11 @@ mkdir -p ams$VER/usr/share/ams
 mkdir -p ams$VER/usr/local/bin
 cp main.sh ams
 chmod +x ams
-cp ams ams$VER/usr/local/bin
+mv ams ams$VER/usr/local/bin
 
 # Setting permissions
 
-chmod 755 ams$VER/usr/local/bin
-chmod 755 ams$VER/DEBIAN/postinst
-chmod 755 ams$VER/DEBIAN/prerm
-chmod 755 ams$VER/DEBIAN/postinst
+chmod 755 ams$VER/DEBIAN/postrm
 
 # Building it
 
