@@ -181,12 +181,9 @@ Bazarr -        $IPADDR:6767 \n" 20 60
 function gdepend {
 
   # Installing dialog
-  mkdir -p /usr/share/ams
   if [ ! -f /usr/share/ams/dialogams ]; then
     sudo apt-get -y install dialog
     touch /usr/share/ams/dialogams
-  else
-    echo "Continuing..."
   fi
 
 }
@@ -201,16 +198,12 @@ function depend {
     touch /usr/share/ams/dockerams
     ## Adding current user to docker group
     sudo usermod -aG docker $USER
-  else
-    echo "Continuing..."
   fi
 
   # Installing curl
   if [ ! -f /usr/share/ams/curlams ]; then  
     sudo apt-get -y install curl
     touch /usr/share/ams/curlams
-  else
-    echo "Continuing..."
   fi
   
 }
@@ -883,7 +876,7 @@ function configmenu {
     "Change Ports" "Change Ports of services and containers" \
     "Services Status" "View the status of services" \
     "Reset Ports to default" "Reset all Ports to default" \
-    "Exit" "Exit configuration menu." 3>&1 1>&2 2>&3)
+    "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
 
   if [ -z "$CONFSEL" ]; then
     nosel
@@ -938,7 +931,8 @@ function custmenu {
     "Download Clients" "Select Download Clients." \
     "Additional Services" "Select Additional Services." \
     "Services Dashboard" "Select services launcher dashboard." \
-    "Container Updater" "Install automatic container updater." 3>&1 1>&2 2>&3)
+    "Container Updater" "Install automatic container updater." \
+    "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
 
   if [ -z "$CUSTSEL" ]; then
     nosel
@@ -959,6 +953,9 @@ function custmenu {
           srvdash
       elif [[ "$CUSTSEL" = "Container Updater" ]] ; then
           conupdate
+      elif [[ "$CUSTSEL" = "Exit" ]] ; then
+          exit
+          clear          
       fi
 
   fi
@@ -975,7 +972,7 @@ function mainmenu {
     "Express Installation" "Express installation using default services and containers." \
     "Services Status" "View information and status of services and containers" \
     "Configuration" "Change ports of services." \
-    "Exit" "Exit the Menu" 3>&1 1>&2 2>&3)
+    "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
 
   if [ -z "$MENUSEL" ]; then
     nosel
@@ -1002,6 +999,7 @@ function mainmenu {
           configmenu
       elif [[ "$MENUSEL" = "Exit" ]] ; then
           exit
+          clear
       fi
   fi
 }
@@ -1032,9 +1030,10 @@ while [ $# -gt 0 ]; do
       help
       exit
       ;;
-    -v|--version
+    -v|--version)
       vers
       exit
+      ;;
     *)
       echo "Unknown option $1"
       help
