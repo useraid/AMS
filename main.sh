@@ -1032,9 +1032,10 @@ while [ $# -gt 0 ]; do
       help
       exit
       ;;
-    -v|--version
+    -v|--version)
       vers
       exit
+      ;;
     *)
       echo "Unknown option $1"
       help
