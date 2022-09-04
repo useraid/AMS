@@ -13,3 +13,7 @@ dpkg-scanpackages /var/www/html/debian/ | gzip -c9  > /var/www/html/debian/Packa
 # Adding to sources.list
 
 echo "deb [trusted=yes] http://$(hostname -I | cut -d' ' -f1)/debian ./" | tee -a /etc/apt/sources.list > /dev/null
+
+# Updating apt cachr
+
+sudo apt update
