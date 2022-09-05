@@ -21,7 +21,7 @@ EOF
 ## Help Prompt
 
 function vers {
-  echo "You are using AMS version 0.1.2."
+  echo "You are using AMS version 0.1.4."
 }
 
 function help {
@@ -401,6 +401,10 @@ echo "$WEBHOOK" >> webhook.txt
 mv webhook.txt /etc/scripts/
 mv webhmon.sh /etc/scripts/
 clear
+
+## Adding script to crontab
+
+(crontab -l 2>/dev/null; echo "*/30 * * * * /etc/scripts/webhmon.sh >/dev/null 2>&1") | crontab -
 
 }
 
@@ -875,6 +879,7 @@ function configmenu {
     "Change Hostname" "Change Hostname of the server." \
     "Change Ports" "Change Ports of services and containers" \
     "Services Status" "View the status of services" \
+    "Webhook Monitoring" "Send status of services through webhooks." \
     "Reset Ports to default" "Reset all Ports to default" \
     "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
 
@@ -889,6 +894,8 @@ function configmenu {
           placeholder
       elif [[ "$CONFSEL" = "Services Status" ]] ; then
           statusinfo
+      elif [[ "$CONFSEL" = "Webhook Monitoring" ]] ; then
+          webhmon
       elif [[ "$CONFSEL" = "Exit" ]] ; then
           exit
           clear
