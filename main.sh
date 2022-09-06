@@ -249,9 +249,9 @@ function indexPack {
   # Indexers and ARR selection
 
   INDEXSEL=$(dialog --title "Choose Indexers" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
-    "1" "Prowlarr" OFF \
-    "2" "Sonarr" OFF \
-    "3" "Radarr" OFF 3>&1 1>&2 2>&3)
+    "1" "Prowlarr" ON \
+    "2" "Sonarr" ON \
+    "3" "Radarr" ON 3>&1 1>&2 2>&3)
     clear
 
 }
@@ -274,8 +274,8 @@ function webui {
   # Webfront UI
 
   WEBUISEL=$(dialog --title "Choose Web UI Services" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
-    "1" "Jellyfin" OFF \
-    "2" "Jellyseerr" OFF 3>&1 1>&2 2>&3)
+    "1" "Jellyfin" ON \
+    "2" "Jellyseerr" ON 3>&1 1>&2 2>&3)
     clear
 
 }
@@ -286,7 +286,7 @@ function downui {
   # Download Clients
 
   DOWNSEL=$(dialog --title "Choose Download Client" --separate-output --checklist "Choose using SPACE and next menu using ENTER" 10 35 4 \
-    "1" "qBittorrent" OFF \
+    "1" "qBittorrent" ON \
     "2" "Deluge" OFF \
     "3" "Transmission" OFF 3>&1 1>&2 2>&3)
     clear
@@ -999,7 +999,10 @@ function mainmenu {
           depend
           gdepend
           custmenu
+          startinstall
           cleanup
+      elif [[ "$MENUSEL" = "Express Installation" ]] ; then
+          startinstall
       elif [[ "$MENUSEL" = "Services Status" ]] ; then
           info
       elif [[ "$MENUSEL" = "Configuration" ]] ; then
