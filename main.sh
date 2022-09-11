@@ -181,9 +181,10 @@ Bazarr -        $IPADDR:6767 \n" 20 60
 function gdepend {
 
   # Installing dialog
-  if [ ! -f /usr/share/ams/dialogams ]; then
+  if ! command -v dialog &> /dev/null
+  then
+    echo "Installing Dialog"
     sudo apt-get -y install dialog
-    touch /usr/share/ams/dialogams
   fi
 
 }
@@ -191,22 +192,23 @@ function gdepend {
 ## Dependencies
 
 function depend {
-  # Installing Docker-CE
-  if [ ! -f /usr/share/ams/dockerams ]; then  
-    curl -fsSL https://get.docker.com -o docker.sh
-    sh docker.sh
-    touch /usr/share/ams/dockerams
-    ## Adding current user to docker group
-    sudo usermod -aG docker $USER
+  echo "Checking Dependencies"
+  # Curl
+  if ! command -v curl &> /dev/null
+  then
+      echo "Installing Curl"
+      sudo apt-get -y install curl
   fi
-
-  # Installing curl
-  if [ ! -f /usr/share/ams/curlams ]; then  
-    sudo apt-get -y install curl
-    touch /usr/share/ams/curlams
+  # Docker
+  if ! command -v docker &> /dev/null
+  then
+      echo "Installing Docker"
+      curl -sSL https://get.docker.com/ | sh
+      sudo usermod -aG docker $USER
+      newgrp docker
   fi
-  
 }
+
 
 ## System Upgrade
 
