@@ -5,5 +5,5 @@ AMS allows you to create a Media Server running services as docker containers.
 
 Download the `deb` package from the releases and install it using `dpkg`.
 ```
-sudo dpkg -i ams*.*.deb
+sudo dpkg -i ams*.deb
 ```
