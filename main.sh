@@ -2,7 +2,7 @@
 
 ## Banner
 
-clear
+function banner {
 cat << EOF
 
  █████╗ ███╗   ███╗███████╗
@@ -17,6 +17,8 @@ Welcome to AutomatedMediaSrv.
 
 For options and flags use -h or --help.
 EOF
+
+}
 
 ## Help Prompt
 
@@ -40,7 +42,7 @@ your own risk.
         -g|--graphical           Run all Services, Programs and Containers.
 
         -c|--cli                 Choose which services, containers and programs to Use.
-                                  (Pending Implementation)
+                                 (Pending Implementation)
 
         -i|--info                Display Information and Status of all running services.
 
@@ -224,15 +226,6 @@ function cleanup {
   rm webhmon.sh
   sudo apt autoremove
   sudo apt autoclean
-}
-
-## Graphical 
-
-function graphical {
-
-  dialog --backtitle "GUI Configuration" \
-      --title "GUI Configuration" --msgbox "The GUI implementation is still a work in progress. Check the repository for progress on these feature." 10 30
-      clear
 }
 
 ## No selection prompt
@@ -1021,6 +1014,7 @@ function mainmenu {
 while [ $# -gt 0 ]; do
   case $1 in
     -c|--cli)
+      banner
       placeholder
       exit
       ;;
@@ -1039,15 +1033,18 @@ while [ $# -gt 0 ]; do
       exit
       ;;
     -h|--help)
+      banner
       help
       exit
       ;;
     -v|--version)
+      banner
       vers
       exit
       ;;
     *)
       echo "Unknown option $1"
+      banner
       help
       exit 1
       ;;
