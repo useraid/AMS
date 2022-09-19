@@ -2,8 +2,8 @@
 
 ## Contents
 
-    - [Configuration](#configuration)
-    - [Contribution](#contribution)
+- [Configuration](#configuration)
+- [Contribution](#contribution)
 
 ## Configuration
 

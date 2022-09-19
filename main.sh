@@ -66,11 +66,64 @@ TRANPASS='adminpass'
 DOCINT='86400'
 IPADDR=$(hostname -I | cut -d' ' -f1)
 
+## GUI Dependencies
+
+function gdepend {
+
+  # Installing dialog
+  if ! command -v dialog &> /dev/null
+  then
+    echo "Installing Dialog"
+    sudo apt-get -y install dialog
+  fi
+
+}
+
+## Dependencies
+
+function depend {
+  echo "Checking Dependencies"
+  # Curl
+  if ! command -v curl &> /dev/null
+  then
+      echo "Installing Curl"
+      sudo apt-get -y install curl
+  fi
+  # Docker
+  if ! command -v docker &> /dev/null
+  then
+      echo "Installing Docker"
+      curl -sSL https://get.docker.com/ | sh
+      sudo usermod -aG docker $USER
+      newgrp docker
+  fi
+}
+
+## System Upgrade
+
+function sysup {
+  sudo apt update
+  sudo apt-get -y upgrade
+}
+
+## Install Cleanup
+
+function cleanup {
+  rm docker.sh
+  rm webhmon.sh
+  sudo apt autoremove
+  sudo apt autoclean
+}
+
 ## Placeholder 
 
 function placeholder {
   echo -e "\nFunction yet to be implemented"
 }
+
+##########################################################################################################
+########################                    Services                 #####################################
+##########################################################################################################
 
 ## Set Hostname
 
@@ -79,6 +132,82 @@ function hostn {
   HNAME=$(dialog --title "Changing Hostname" --inputbox "Enter New Hostname" 10 100 3>&1 1>&2 2>&3)
   clear
   sudo hostnamectl set-hostname $HNAME
+}
+
+## Container Autoupdater
+
+function contupdater {
+  DOCINT=$(dialog --title "Container Auto Update - Watchtower" --inputbox "Enter time interval to check updates" 10 100 3>&1 1>&2 2>&3)
+}
+
+
+### Webhook Monitoring ####################### OPTIMIZE THIS ####################
+
+function webhmon {
+  WEBHOOK=$(dialog --inputbox "Enter Webhook URL" 10 100 3>&1 1>&2 2>&3)
+echo '#!/bin/bash
+url="$(cat webhook.txt)"
+ipaddr=$(hostname -I | cut -d' ' -f1)
+websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
+curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $url
+for website in ${websites_list} ; do
+        status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
+
+        if [[ "$status_code" -ne 200 ]] ; then
+            if [[ "$website" = http://*.*.*.*:8096 ]] ; then
+                domain="Jellyfin"
+            elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
+                domain="Portainer"
+            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                domain="Filebrowser"
+            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                domain="Prowlarr"
+            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                domain="Bazarr"
+            elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
+                domain="Sonarr"
+            elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
+                domain="Radarr"
+            elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
+                domain="qBittorrent"
+            elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
+                domain="Jellyseerr"
+            fi
+            curl -H "Content-Type: application/json" -X POST -d '{"content":"'"${domain} is down with SC : ${status_code}"'"}'  $url
+        else
+            if [[ "$website" = http://*.*.*.*:8096 ]] ; then
+                domain="Jellyfin"
+            elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
+                domain="Portainer"
+            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
+                domain="Filebrowser"
+            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
+                domain="Prowlarr"
+            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
+                domain="Bazarr"
+            elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
+                domain="Sonarr"
+            elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
+                domain="Radarr"
+            elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
+                domain="qBittorrent"
+            elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
+                domain="Jellyseerr"
+            fi
+            curl -H "Content-Type: application/json" -X POST -d '{"content":"'"${domain} is up and running with SC : ${status_code}"'"}'  $url
+        fi
+done' >> webhmon.sh
+sudo mkdir -p /etc/scripts
+chmod +x webhmon.sh
+echo "$WEBHOOK" >> webhook.txt
+mv webhook.txt /etc/scripts/
+mv webhmon.sh /etc/scripts/
+clear
+
+## Adding script to crontab
+
+(crontab -l 2>/dev/null; echo "*/30 * * * * /etc/scripts/webhmon.sh >/dev/null 2>&1") | crontab -
+
 }
 
 ## Status Monitoring function
@@ -178,55 +307,9 @@ Bazarr -        $IPADDR:6767 \n" 20 60
 
 }
 
-## GUI Dependencies
-
-function gdepend {
-
-  # Installing dialog
-  if ! command -v dialog &> /dev/null
-  then
-    echo "Installing Dialog"
-    sudo apt-get -y install dialog
-  fi
-
-}
-
-## Dependencies
-
-function depend {
-  echo "Checking Dependencies"
-  # Curl
-  if ! command -v curl &> /dev/null
-  then
-      echo "Installing Curl"
-      sudo apt-get -y install curl
-  fi
-  # Docker
-  if ! command -v docker &> /dev/null
-  then
-      echo "Installing Docker"
-      curl -sSL https://get.docker.com/ | sh
-      sudo usermod -aG docker $USER
-      newgrp docker
-  fi
-}
-
-
-## System Upgrade
-
-function sysup {
-  sudo apt update
-  sudo apt-get -y upgrade
-}
-
-## Install Cleanup
-
-function cleanup {
-  rm docker.sh
-  rm webhmon.sh
-  sudo apt autoremove
-  sudo apt autoclean
-}
+##########################################################################################################
+########################                 User Selection                ###################################
+##########################################################################################################
 
 ## No selection prompt
 
@@ -334,74 +417,6 @@ function srvdash {
 
 }
 
-### Webhook Monitoring ####################### OPTIMIZE THIS ####################
-
-function webhmon {
-  WEBHOOK=$(dialog --inputbox "Enter Webhook URL" 10 100 3>&1 1>&2 2>&3)
-echo '#!/bin/bash
-url="$(cat webhook.txt)"
-ipaddr=$(hostname -I | cut -d' ' -f1)
-websites_list="http://$ipaddr:8096 http://$ipaddr:9000 http://$ipaddr:8989 http://$ipaddr:7878 http://$ipaddr:8090 http://$ipaddr:5055"
-curl -H "Content-Type: application/json" -X POST -d '{"content":"'" $(date) \n***Services*** "'"}'  $url
-for website in ${websites_list} ; do
-        status_code=$(curl --write-out %{http_code} --silent --output /dev/null -L ${website})
-
-        if [[ "$status_code" -ne 200 ]] ; then
-            if [[ "$website" = http://*.*.*.*:8096 ]] ; then
-                domain="Jellyfin"
-            elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
-                domain="Portainer"
-            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
-                domain="Filebrowser"
-            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
-                domain="Prowlarr"
-            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
-                domain="Bazarr"
-            elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
-                domain="Sonarr"
-            elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
-                domain="Radarr"
-            elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
-                domain="qBittorrent"
-            elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
-                domain="Jellyseerr"
-            fi
-            curl -H "Content-Type: application/json" -X POST -d '{"content":"'"${domain} is down with SC : ${status_code}"'"}'  $url
-        else
-            if [[ "$website" = http://*.*.*.*:8096 ]] ; then
-                domain="Jellyfin"
-            elif [[ "$website" = http://*.*.*.*:9000 ]] ; then
-                domain="Portainer"
-            elif [[ "$website" = http://*.*.*.*:8070 ]] ; then
-                domain="Filebrowser"
-            elif [[ "$website" = http://*.*.*.*:9696 ]] ; then
-                domain="Prowlarr"
-            elif [[ "$website" = http://*.*.*.*:6767 ]] ; then
-                domain="Bazarr"
-            elif [[ "$website" = http://*.*.*.*:8989 ]] ; then
-                domain="Sonarr"
-            elif [[ "$website" = http://*.*.*.*:7878 ]] ; then
-                domain="Radarr"
-            elif [[ "$website" = http://*.*.*.*:8090 ]] ; then
-                domain="qBittorrent"
-            elif [[ "$website" = http://*.*.*.*:5055 ]] ; then
-                domain="Jellyseerr"
-            fi
-            curl -H "Content-Type: application/json" -X POST -d '{"content":"'"${domain} is up and running with SC : ${status_code}"'"}'  $url
-        fi
-done' >> webhmon.sh
-sudo mkdir -p /etc/scripts
-chmod +x webhmon.sh
-echo "$WEBHOOK" >> webhook.txt
-mv webhook.txt /etc/scripts/
-mv webhmon.sh /etc/scripts/
-clear
-
-## Adding script to crontab
-
-(crontab -l 2>/dev/null; echo "*/30 * * * * /etc/scripts/webhmon.sh >/dev/null 2>&1") | crontab -
-
-}
 
 ## Monitoring
 
@@ -415,7 +430,9 @@ function monitor {
 
 }
 
-## Installer
+#########################################################################################################
+########################                 Installation                ####################################
+#########################################################################################################
 
 function startinstall {
   # Indexers
@@ -867,37 +884,6 @@ function rmserv {
 
 }
 
-## Configuration Menu 
-
-function configmenu {
-  CONFSEL=$(dialog --title "Configuration Menu" --menu "Choose an option" 18 100 10 \
-    "Change Hostname" "Change Hostname of the server." \
-    "Change Ports" "Change Ports of services and containers" \
-    "Services Status" "View the status of services" \
-    "Webhook Monitoring" "Send status of services through webhooks." \
-    "Reset Ports to default" "Reset all Ports to default" \
-    "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
-
-  if [ -z "$CONFSEL" ]; then
-    nosel
-  else
-      if [[ "$CONFSEL" = "Change Ports" ]] ; then
-          placeholder
-      elif [[ "$CONFSEL" = "Change Hostname" ]] ; then
-          hostn
-      elif [[ "$CONFSEL" = "Reset Ports to default" ]] ; then
-          placeholder
-      elif [[ "$CONFSEL" = "Services Status" ]] ; then
-          statusinfo
-      elif [[ "$CONFSEL" = "Webhook Monitoring" ]] ; then
-          webhmon
-      elif [[ "$CONFSEL" = "Exit" ]] ; then
-          exit
-          clear
-      fi
-  fi
-
-}
 
 ## Install Containers Function
 
@@ -919,6 +905,42 @@ function instcontainers {
   monitor
   ## Container Updater
   conupdate
+
+}
+
+#################################################################################################
+########################               User Menu            #####################################
+#################################################################################################
+
+## Configuration Menu 
+
+function configmenu {
+  CONFSEL=$(dialog --title "Configuration Menu" --menu "Choose an option" 18 100 10 \
+    "Change Hostname" "Change Hostname of the server." \
+    "Change Watchtower Interval" "Change the time interval for Watchtower- container updater." \
+    "Services Status" "View the status of services" \
+    "Webhook Monitoring" "Send status of services through webhooks." \
+    "Reset Ports to default" "Reset all Ports to default" \
+    "Exit" "Exit the Menu." 3>&1 1>&2 2>&3)
+
+  if [ -z "$CONFSEL" ]; then
+    nosel
+  else
+      if [[ "$CONFSEL" = "Change Watchtower Interval" ]] ; then
+          contupdater
+      elif [[ "$CONFSEL" = "Change Hostname" ]] ; then
+          hostn
+      elif [[ "$CONFSEL" = "Reset Ports to default" ]] ; then
+          placeholder
+      elif [[ "$CONFSEL" = "Services Status" ]] ; then
+          statusinfo
+      elif [[ "$CONFSEL" = "Webhook Monitoring" ]] ; then
+          webhmon
+      elif [[ "$CONFSEL" = "Exit" ]] ; then
+          exit
+          clear
+      fi
+  fi
 
 }
 
