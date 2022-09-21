@@ -1,4 +1,4 @@
-name: Greetings
+name: Greeting new users on PRs and Issue Creation
 
 on: [pull_request_target, issues]
 
@@ -12,5 +12,5 @@ jobs:
     - uses: actions/first-interaction@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: "Welcome to the AMS community. Thanks for raising an issue. Make sure to use give a proper description and a way to reproduce the bug."
-        pr-message: "Welcome to the AMS community. Thanks for the PR. I'll review it soon."
+        issue-message: "Welcome to the AMS community. Thanks for raising an issue. Make sure to use give a proper description and a way to reproduce the bug/error."
+        pr-message: "Welcome to the AMS community. Thanks for the PR. Make sure you go through the Contribution documentation before submitting PRs. I'll try to review it soon😊."
