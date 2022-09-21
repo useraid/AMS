@@ -1,5 +1,6 @@
 # AMS
 
+<p align="right"><a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fuseraid%2FAMS&count_bg=%23262B22&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a></p>
 
 ![New Project](https://user-images.githubusercontent.com/93074700/191500641-70210a97-bc0a-4a6e-b1e6-f2d9deeb28d0.png)
 
