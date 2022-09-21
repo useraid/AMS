@@ -1,6 +1,6 @@
 # AMS
+![New Project](https://user-images.githubusercontent.com/93074700/191500408-ad697689-1a72-427d-94a7-e0e0675ee226.png)
 
-![New Project](https://user-images.githubusercontent.com/93074700/191499753-690954f4-3fe9-41cd-98da-a0a9b8e69701.png)
 
 
 AMS allows you to create a Media Server running services as docker containers.
