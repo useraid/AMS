@@ -12,15 +12,17 @@ AMS allows you to create a Media Server running services as docker containers.
 ```
 git clone https://github.com/useraid/AMS.git
 ```
-### Build the debian package
+### Make ams executable and Run the program
 ```
-chmod +x build.sh
-./build.sh
+chmod +x ams
+./ams
 ```
-### Install the Package
-Download the `deb` package from the releases and install it using `dpkg`.
+
+## Quick Start
+
+### To start in graphical mode
 ```
-sudo dpkg -i ams*.deb
+./ams -g
 ```
 ## Documentation 
 

@@ -39,6 +39,8 @@ your own risk.
 
         -h|--help                Display all options and flags. 
 
+        --install                Install ams.
+
         -g|--graphical           Run all Services, Programs and Containers.
 
         -c|--cli                 Choose which services, containers and programs to Use.
@@ -81,6 +83,11 @@ function gdepend {
 
 ## Dependencies
 
+function installer {
+  sudo mv ams /usr/local/bin
+  echo -e "kat is now installed. \nUse kat to run commands."
+}
+
 function depend {
   echo "Checking Dependencies"
   # Curl
@@ -108,14 +115,16 @@ function sysup {
 
 ## Install Cleanup
 
-function cleanup {
-  rm docker.sh
-  rm webhmon.sh
-  sudo apt autoremove
-  sudo apt autoclean
-}
+# function cleanup {
+#   rm docker.sh
+#   rm webhmon.sh
+#   sudo apt autoremove
+#   sudo apt autoclean
+# }
 
 ## Placeholder 
+
+
 
 function placeholder {
   echo -e "\nFunction yet to be implemented"
@@ -1007,17 +1016,17 @@ function mainmenu {
           gdepend
           instcontainers
           startinstall
-          cleanup
+          # cleanup
       elif [[ "$MENUSEL" = "Remove Containers" ]] ; then
           rmserv
-          cleanup
+          # cleanup
       elif [[ "$MENUSEL" = "Custom Installation" ]] ; then
           sysup
           depend
           gdepend
           custmenu
           startinstall
-          cleanup
+          # cleanup
       elif [[ "$MENUSEL" = "Express Installation" ]] ; then
           startinstall
       elif [[ "$MENUSEL" = "Services Status" ]] ; then
@@ -1062,6 +1071,11 @@ while [ $# -gt 0 ]; do
     -v|--version)
       banner
       vers
+      exit
+      ;;
+    --install)
+      banner
+      installer
       exit
       ;;
     *)
