@@ -15,15 +15,22 @@ git clone https://github.com/useraid/AMS.git
 ### Make ams executable and Run the program
 ```
 chmod +x ams
-./ams
+sudo ./ams
 ```
+### For smoother experience install it
+```
+sudo ./ams --install
+```
+Now, you can just call `ams` instead of `./ams`.
 
 ## Quick Start
 
 ### To start in graphical mode
 ```
-./ams -g
+sudo ./ams -g
 ```
+Navigate the menus using arrow keys and use spacebar and enter to enter and confirm choices.
+
 ## Documentation 
 
 You can find the Documentation in the wiki or [here.](/Docs/)
