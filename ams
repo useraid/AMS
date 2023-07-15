@@ -48,7 +48,7 @@ your own risk.
 
         -i|--info                Display Information and Status of all running services.
 
-        -v|--version             Display current version of ams.
+        -e|--edit                Edit AMS configuration
 
         -s|--status              Display Status of all the services.
 
@@ -1068,9 +1068,9 @@ while [ $# -gt 0 ]; do
       help
       exit
       ;;
-    -v|--version)
+    -e|--edit)
       banner
-      vers
+      sudo nano /usr/local/bin/ams
       exit
       ;;
     --install)
