@@ -29,7 +29,7 @@ Now, you can just call `ams` instead of `./ams`.
 ```
 sudo ./ams -g
 ```
-Navigate the menus using arrow keys and use spacebar and enter to enter and confirm choices.
+Navigate the menus using **arrow keys** and use **spacebar** and **enter** to enter and confirm choices.
 
 ## Documentation 
 
