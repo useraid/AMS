@@ -23,6 +23,10 @@ sudo ./ams --install
 ```
 Now, you can just call `ams` instead of `./ams`.
 
+## Screenshots
+
+![Screenshot from 2023-07-16 01-47-26](https://github.com/useraid/AMS/assets/93074700/26bce794-7fa9-4128-90c1-bb8def96e668)
+
 ## Quick Start
 
 ### To start in graphical mode
