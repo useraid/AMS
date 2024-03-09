@@ -42,3 +42,5 @@ You can find the Documentation in the wiki or [here.](/Docs/)
 ## Contribution
 
 Before contributing, go through the [Contribution Guide](/CONTRIBUTING.md). This will allow you to have a better chance at a successful PR/Contribution.
+# WIP
+This project is still a work in progress so if you have any difficulties, kindly raise and issue and i'll be happy to help.
